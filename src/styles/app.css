@@ -1,3 +1,5 @@
+@import "@fontsource/gloock/latin-400.css";
+@import "@fontsource-variable/schibsted-grotesk/wght.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -24,6 +26,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-highlight: var(--highlight);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -154,10 +157,5 @@
 
   .chart-frame .recharts-cartesian-grid line {
     stroke: var(--border);
-  }
-
-  .chart-frame .recharts-surface:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 4px;
   }
 }

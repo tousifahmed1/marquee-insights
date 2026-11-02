@@ -32,13 +32,14 @@ export const Route = createFileRoute('/reports/')({
     return reports
   },
   head: ({ loaderData, match }) => {
-    const category = loaderData?.category ? `${categoryLabel(loaderData.category)} reports` : 'Reports'
-    const page = loaderData && loaderData.page > 1 ? `, page ${loaderData.page}` : ''
+    if (!loaderData) return {}
+    const category = loaderData.category ? `${categoryLabel(loaderData.category)} reports` : 'Reports'
+    const page = loaderData.page > 1 ? `, page ${loaderData.page}` : ''
     return seoHead(
       resolveSeo(match.context.siteSettings, {
         title: `${category}${page}`,
         description: 'Published research on viewing habits, release strategy and audience loyalty.',
-        path: loaderData ? reportsPath(loaderData.category, loaderData.page) : '/reports',
+        path: reportsPath(loaderData.category, loaderData.page),
       }),
     )
   },

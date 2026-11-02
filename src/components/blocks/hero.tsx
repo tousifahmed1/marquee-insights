@@ -19,7 +19,7 @@ export function Hero({ block, isPageHeading }: BlockProps<HeroBlock>) {
       >
         <div>
           {block.eyebrow ? (
-            <p className="mb-6 text-sm font-medium text-primary">{block.eyebrow}</p>
+            <p className="mb-6 text-sm font-medium text-highlight">{block.eyebrow}</p>
           ) : null}
           <Heading data-scroll-moment="headline" className="max-w-4xl text-6xl">{block.heading}</Heading>
           {block.subheading ? (

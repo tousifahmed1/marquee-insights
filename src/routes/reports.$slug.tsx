@@ -13,23 +13,21 @@ export const Route = createFileRoute('/reports/$slug')({
     return report
   },
   head: ({ loaderData, match }) => {
+    if (!loaderData) return {}
     const settings = match.context.siteSettings
     const head = seoHead(
       resolveSeo(settings, {
-        seo: loaderData?.seo,
-        title: loaderData?.title,
-        description: loaderData?.excerpt,
-        image: loaderData?.coverImage,
-        path: loaderData ? `/reports/${loaderData.slug}` : null,
+        seo: loaderData.seo,
+        title: loaderData.title,
+        description: loaderData.excerpt,
+        image: loaderData.coverImage,
+        path: `/reports/${loaderData.slug}`,
         type: 'article',
-        publishedAt: loaderData?.publishedAt,
-        modifiedAt: loaderData?.updatedAt,
+        publishedAt: loaderData.publishedAt,
+        modifiedAt: loaderData.updatedAt,
       }),
     )
-    return {
-      ...head,
-      meta: loaderData ? [...head.meta, articleJsonLd(loaderData, settings)] : head.meta,
-    }
+    return { ...head, meta: [...head.meta, articleJsonLd(loaderData, settings)] }
   },
   headers: () => cacheHeaders('content'),
   component: ReportPage,

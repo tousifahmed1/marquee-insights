@@ -41,7 +41,9 @@ export const Route = createFileRoute('/explore')({
     if (query.page > rows.totalPages) throw notFound()
   },
   head: ({ match }) =>
-    seoHead(
+    match.status === 'notFound'
+      ? {}
+      : seoHead(
       resolveSeo(match.context.siteSettings, {
         title: 'Audience explorer',
         path: '/explore',

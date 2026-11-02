@@ -166,6 +166,7 @@ describe('structured data', () => {
       name: 'Marquee Insights',
       url: `${SITE}/`,
       description: 'Default description.',
+      logo: `${SITE}/logo.png`,
     })
   })
 

@@ -17,7 +17,7 @@ export function Nav() {
               <li key={link.href}>
                 <CmsLink
                   href={link.href}
-                  className="text-sm font-medium text-muted-foreground decoration-primary decoration-2 underline-offset-8 hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:underline"
+                  className="text-sm font-medium text-muted-foreground decoration-highlight decoration-2 underline-offset-8 hover:text-foreground aria-[current=page]:text-foreground aria-[current=page]:underline"
                 >
                   {link.label}
                 </CmsLink>

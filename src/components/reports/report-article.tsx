@@ -37,7 +37,7 @@ export function ReportArticle({ report }: { report: Report }) {
           <p className="mt-16 border-t pt-8">
             <Link
               to="/reports"
-              className="font-medium underline decoration-primary decoration-2 underline-offset-4"
+              className="font-medium underline decoration-highlight decoration-2 underline-offset-4"
             >
               Back to all reports
             </Link>

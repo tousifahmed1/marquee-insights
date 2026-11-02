@@ -71,6 +71,11 @@ export function resolveSeo(
   }
 }
 
+// For 404 and error pages: a plain title, no canonical URL and kept out of search.
+export function statusSeo(settings: SiteSettings, title: string): SeoInput {
+  return { ...resolveSeo(settings, { title }), noindex: true }
+}
+
 export function seoHead(input: SeoInput): { meta: HeadMeta[]; links: HeadLink[] } {
   const { title, description, image, noindex, siteName, path, type } = input
   const url = path !== null && !noindex ? absoluteUrl(path) : null

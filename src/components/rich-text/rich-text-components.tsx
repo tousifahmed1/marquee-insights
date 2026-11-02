@@ -16,10 +16,10 @@ export const richTextComponents: PortableTextComponents = {
   },
   list: {
     bullet: ({ children }) => (
-      <ul className="mt-6 list-disc space-y-2 pl-6 text-lg marker:text-primary">{children}</ul>
+      <ul className="mt-6 list-disc space-y-2 pl-6 text-lg marker:text-highlight">{children}</ul>
     ),
     number: ({ children }) => (
-      <ol className="mt-6 list-decimal space-y-2 pl-6 text-lg marker:text-primary">{children}</ol>
+      <ol className="mt-6 list-decimal space-y-2 pl-6 text-lg marker:text-highlight">{children}</ol>
     ),
   },
   listItem: ({ children }) => <li className="pl-2">{children}</li>,
@@ -32,7 +32,7 @@ export const richTextComponents: PortableTextComponents = {
       return (
         <CmsLink
           href={href}
-          className="text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:decoration-foreground"
+          className="text-foreground underline decoration-highlight decoration-2 underline-offset-4 hover:decoration-foreground"
         >
           {children}
         </CmsLink>

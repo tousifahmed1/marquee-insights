@@ -19,6 +19,7 @@ export function organizationJsonLd(settings: SiteSettings): JsonLdMeta {
       name: settings.siteName,
       url: absoluteUrl('/'),
       description: settings.defaultSeo.description,
+      logo: absoluteUrl('/logo.png'),
     },
   }
 }

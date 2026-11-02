@@ -33,9 +33,9 @@ function ChartCard({
   return (
     <figure aria-labelledby={`${id}-title`} className="rounded-lg border bg-card p-5">
       <figcaption>
-        <h3 id={`${id}-title`} className="font-sans text-base font-medium">
+        <h2 id={`${id}-title`} className="font-sans text-base font-medium">
           {title}
-        </h3>
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </figcaption>
       <div className="mt-4" aria-hidden>

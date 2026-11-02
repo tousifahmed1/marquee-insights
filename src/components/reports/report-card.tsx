@@ -36,7 +36,7 @@ export function ReportCard({ report }: { report: ReportSummary }) {
           <Link
             to="/reports/$slug"
             params={{ slug: report.slug }}
-            className="decoration-primary decoration-2 underline-offset-4 after:absolute after:inset-0 group-focus-within:underline group-hover:underline"
+            className="decoration-highlight decoration-2 underline-offset-4 after:absolute after:inset-0 group-focus-within:underline group-hover:underline"
           >
             {report.title}
           </Link>

@@ -13,7 +13,9 @@ export const Route = createFileRoute('/')({
     return page
   },
   head: ({ loaderData, match }) =>
-    seoHead(resolveSeo(match.context.siteSettings, { seo: loaderData?.seo, path: '/' })),
+    loaderData
+      ? seoHead(resolveSeo(match.context.siteSettings, { seo: loaderData.seo, path: '/' }))
+      : {},
   headers: () => cacheHeaders('content'),
   component: HomePage,
 })

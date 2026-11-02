@@ -48,6 +48,7 @@ src/
   test/              Vitest helpers, such as renderWithRouter()
 studio/              Sanity Studio: schemas in schemaTypes/, desk structure in structure.ts
 scripts/             seed scripts and one-off tooling
+public/              favicon, touch icon and logo, drawn by scripts/brand-icons.ts
 tests/               Playwright smoke tests
 ```
 
@@ -116,7 +117,10 @@ tests/               Playwright smoke tests
 
 ### Styling and motion
 - Use theme tokens from `src/styles`. No hard-coded colors, font sizes or spacing values.
+- `primary` (bright amber) is for fills: buttons, bars, bulbs, borders. Amber text, icons and underlines on the page background use `highlight` (`text-highlight`, `decoration-highlight`), which is darker in the light theme: bright amber on paper is 1.5:1. Check both themes for contrast.
+- Fonts are self-hosted with Fontsource (latin subset) and imported at the top of `app.css`. The two files the first screen needs are preloaded in `__root.tsx`. Never load fonts from Google or another origin: it costs about a second of render-blocking time on mobile.
 - Tailwind's default palette and scales are removed, so `bg-blue-500` or `text-7xl` will not compile. Add new values as tokens in `src/styles/tokens.css` first, then map them in `src/styles/app.css`.
+- `ui/slider.tsx` forwards `aria-label`, `aria-labelledby` and `aria-valuetext` to the thumb, the element with `role="slider"`; keep that if you regenerate it.
 - Use shadcn components before writing new primitives. Add them with `pnpm dlx shadcn@latest add <name>`. Do not run `shadcn init`; the project is already configured.
 - Every animation respects `prefers-reduced-motion`. Motion components get this from `<MotionConfig reducedMotion="user">` in `__root.tsx` (transforms off, fades kept). Anything driven outside React (`Reveal`, GSAP) checks the media query itself.
 - Motion supports the content. No animation that delays reading or interaction.
@@ -124,6 +128,9 @@ tests/               Playwright smoke tests
 - GSAP is for the home page scroll moment only (`src/lib/motion/home-scroll-moment.ts`). The home route imports it dynamically after mount, and not at all for reduced motion, so no other page downloads it. It finds its targets through `data-scroll-moment` attributes on the hero and stats blocks.
 - A GSAP-pinned element must not sit inside a transformed parent. That is why `SectionRenderer` wraps only feature grids, quotes and CTA banners in `Reveal`.
 - Use Motion (`motion/react`) for everything else. Sheets use `MotionSheet` in `src/components/motion`, which drives the Radix dialog through `AnimatePresence` so it animates out as well as in.
+
+### Error and 404 pages
+- `NotFound` and `ErrorPage` (built on `StatusPage`) are the router's defaults and the root's components, so every route gets them. The root `head` gives them a "Page not found" or "Something went wrong" title with `noindex`, which is why route heads return `{}` when they have no loader data. `ErrorPage` shows error details only in development.
 
 ### Testing
 - E2e tests open pages with `gotoHydrated()` from `tests/helpers.ts` before clicking or typing, so they never act before React is interactive.

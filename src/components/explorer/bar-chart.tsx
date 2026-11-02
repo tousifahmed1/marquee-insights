@@ -62,7 +62,6 @@ export function AverageBarChart({ data, measure, orientation, color }: AverageBa
       <ResponsiveContainer width="100%" height="100%" initialDimension={SSR_SIZE}>
         <BarChart
           id={id}
-          accessibilityLayer
           data={plot}
           layout={horizontal ? 'vertical' : 'horizontal'}
           margin={horizontal ? { top: 4, right: 48, bottom: 4, left: 8 } : { top: 24, right: 8, bottom: 4, left: 0 }}

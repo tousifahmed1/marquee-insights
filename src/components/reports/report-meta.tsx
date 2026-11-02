@@ -13,7 +13,7 @@ export function ReportMeta({ report, className }: ReportMetaProps) {
   return (
     <p className={cn('flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground', className)}>
       {report.category ? (
-        <span className="font-medium text-primary">{categoryLabel(report.category)}</span>
+        <span className="font-medium text-highlight">{categoryLabel(report.category)}</span>
       ) : null}
       {report.publishedAt ? (
         <time dateTime={report.publishedAt}>{formatDate(report.publishedAt)}</time>

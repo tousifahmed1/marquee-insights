@@ -42,7 +42,7 @@
 
   /* Typefaces */
   --font-family-display: "Gloock", "Iowan Old Style", Georgia, serif;
-  --font-family-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: "Schibsted Grotesk Variable", "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-family-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
   /* Type scale: classic 12 / 14 / 16 / 18 / 21 / 24 / 36, display sizes are fluid */
@@ -93,6 +93,8 @@
   --popover-foreground: var(--navy-900);
   --primary: var(--amber-400);
   --primary-foreground: var(--navy-950);
+  /* Amber for text and icons on the page background: 4.7:1 on paper */
+  --highlight: var(--amber-700);
   --secondary: var(--paper-200);
   --secondary-foreground: var(--navy-900);
   --muted: var(--paper-200);
@@ -127,6 +129,7 @@
   --popover-foreground: var(--paper-100);
   --primary: var(--amber-400);
   --primary-foreground: var(--navy-950);
+  --highlight: var(--amber-400);
   --secondary: var(--navy-700);
   --secondary-foreground: var(--paper-100);
   --muted: var(--navy-800);
