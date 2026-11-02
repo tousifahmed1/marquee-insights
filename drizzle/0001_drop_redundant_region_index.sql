@@ -1,0 +1,1 @@
+DROP INDEX "responses_region_idx";
