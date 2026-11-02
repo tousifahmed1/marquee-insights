@@ -23,7 +23,8 @@ Marketing site and data explorer for a fictional entertainment audience research
 - `pnpm seed` clears and reloads the synthetic survey data in Neon (40 shows, 50,000 responses). Safe to re-run
 - `pnpm db:generate` creates a migration from `src/data/schema.ts`; `pnpm db:migrate` applies it
 - `pnpm db:explain` runs the explorer queries for typical filter combinations with `EXPLAIN ANALYZE` and fails if any takes 200ms or more in Postgres
-- `pnpm deploy` deploys to Cloudflare
+- `pnpm deploy` builds and deploys to Cloudflare. It always rebuilds, so never run `wrangler deploy` on its own: a stale `dist/` ships old code
+- `pnpm check:prod` checks every route on the live site after a deploy (pass a URL to check another server)
 
 **Always run `pnpm verify` before saying a task is done. If it fails, fix it. Never skip or weaken a check to make it pass.**
 

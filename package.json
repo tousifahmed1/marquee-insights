@@ -16,6 +16,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:check": "drizzle-kit check",
     "db:explain": "tsx scripts/explain-explorer.ts",
+    "check:prod": "tsx scripts/check-production.ts",
     "db:studio": "drizzle-kit studio",
     "generate-routes": "tsr generate",
     "build": "vite build",
