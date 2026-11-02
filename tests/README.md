@@ -1,0 +1,3 @@
+# tests
+
+Playwright smoke tests.
