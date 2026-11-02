@@ -1,3 +1,5 @@
+packages:
+  - studio
 allowBuilds:
   esbuild: true
   lightningcss: true

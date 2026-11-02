@@ -16,3 +16,6 @@ todos.json
 playwright-report
 test-results
 blob-report
+
+# Playwright MCP
+.playwright-mcp
