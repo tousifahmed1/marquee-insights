@@ -23,7 +23,7 @@ test('reports listing filters by category and pages through results in the URL',
     await expect(card.getByText('TV', { exact: true })).toBeVisible()
   }
 
-  await page.goto('/reports')
+  await gotoHydrated(page, '/reports')
   const older = page.getByRole('link', { name: 'Older reports' })
   if (await older.count()) {
     await older.click()

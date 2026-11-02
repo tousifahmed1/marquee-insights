@@ -112,7 +112,8 @@ tests/               Playwright smoke tests
 - E2e tests open pages with `gotoHydrated()` from `tests/helpers.ts` before clicking or typing, so they never act before React is interactive.
 - E2e tests run against the real Sanity dataset. Assert structure and behaviour (one h1, cards link to reports, 404s), not seeded wording, so editing content never breaks the build.
 - After a client-side navigation, wait for something that only the new page renders before reading the page. The URL changes before the loader finishes.
-- `playwright.config.ts` loads `.env`; the preview test needs `SANITY_PREVIEW_SECRET` and fails without it.
+- `playwright.config.ts` loads `.env`; the preview test needs `SANITY_PREVIEW_SECRET` and the explorer tests need `DATABASE_URL` with seeded data (`pnpm seed`). Both fail without them.
+- Explorer logic is tested without a database: Zod schemas in `filters.test.ts`, URL cleaning in `search.test.ts`, and the query builder compiled to SQL text and parameters in `query-builder.test.ts`. A new filter needs a case in all three.
 
 ### Code
 - TypeScript strict mode. No `any` without a comment explaining why.
