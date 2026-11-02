@@ -22,6 +22,7 @@ Marketing site and data explorer for a fictional entertainment audience research
 - `pnpm seed:content` writes the seed pages and reports to Sanity using your Sanity CLI login. Safe to re-run
 - `pnpm seed` clears and reloads the synthetic survey data in Neon (40 shows, 50,000 responses). Safe to re-run
 - `pnpm db:generate` creates a migration from `src/data/schema.ts`; `pnpm db:migrate` applies it
+- `pnpm db:explain` runs the explorer queries for typical filter combinations with `EXPLAIN ANALYZE` and fails if any takes 200ms or more in Postgres
 - `pnpm deploy` deploys to Cloudflare
 
 **Always run `pnpm verify` before saying a task is done. If it fails, fix it. Never skip or weaken a check to make it pass.**
@@ -69,6 +70,15 @@ tests/               Playwright smoke tests
 - `SANITY_STUDIO_*` values are public: Vite builds them into the browser bundle (the image URL builder needs them) and the Studio does the same. `.env` must exist when you build or deploy.
 - Secrets (`SANITY_READ_TOKEN`, `SANITY_PREVIEW_SECRET`) are read at runtime from `process.env`. Never give them the `SANITY_STUDIO_` prefix. In production they are Worker secrets (`wrangler secret put`).
 - Server functions are protected by TanStack Start's CSRF middleware in `src/start.ts`.
+
+### Database
+- `src/data/schema.ts` is the source of truth. Change it, run `pnpm db:generate`, review the SQL, then `pnpm db:migrate`. Never edit a migration that has been applied; add a new one.
+- Dimension values and labels (platforms, genres, regions, age groups, genders) live in `src/data/dimensions.ts`. The enums, Zod schemas and filter UI all read from there.
+- Explorer inputs are validated by the Zod schemas in `src/data/filters.ts`. Every filter becomes a `WHERE` condition in `src/data/query-builder.ts`, and every sort ends with `id` so pages never overlap.
+- Each server function makes one round trip: send its queries together with `db.batch()`. In development, `timed()` logs each call as `[data] <label> <ms>`.
+- The Neon database is in `us-east-1`, so expect about 300ms per round trip from far away. Measure query cost with `pnpm db:explain`, not with the dev log.
+- Run `pnpm db:explain` after changing a query or an index. Add an index rather than accept a query over 200ms.
+- Server-only packages used in development (like drizzle and zod) are listed in `environments.ssr.optimizeDeps.include` in `vite.config.ts`. Add new ones there, or Vite reloads mid-request on a cold start and breaks e2e runs.
 
 ### Caching
 - All cache policies live in `src/lib/cache-control.ts`. Routes opt in with `headers: () => cacheHeaders('content')`; never write cache headers by hand.
