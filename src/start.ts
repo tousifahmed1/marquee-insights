@@ -1,4 +1,4 @@
-import { createMiddleware, createStart } from '@tanstack/react-start'
+import { createCsrfMiddleware, createMiddleware, createStart } from '@tanstack/react-start'
 
 import { applyDefaultCachePolicy } from '@/lib/cache-control'
 
@@ -8,6 +8,10 @@ const cachePolicyMiddleware = createMiddleware().server(async ({ next }) => {
   return result
 })
 
+const csrfMiddleware = createCsrfMiddleware({
+  filter: (ctx) => ctx.handlerType === 'serverFn',
+})
+
 export const startInstance = createStart(() => ({
-  requestMiddleware: [cachePolicyMiddleware],
+  requestMiddleware: [cachePolicyMiddleware, csrfMiddleware],
 }))
