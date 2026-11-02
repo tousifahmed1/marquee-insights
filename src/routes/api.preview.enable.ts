@@ -7,6 +7,7 @@ import {
   secretsMatch,
   toPreviewPath,
 } from '@/lib/preview-session'
+import { serverSecret } from '@/lib/server-env'
 
 const text = (body: string, status: number) =>
   new Response(body, { status, headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
@@ -15,8 +16,8 @@ export const Route = createFileRoute('/api/preview/enable')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const secret = process.env.SANITY_PREVIEW_SECRET
-        if (!secret || !process.env.SANITY_READ_TOKEN) {
+        const secret = serverSecret('SANITY_PREVIEW_SECRET')
+        if (!secret || !serverSecret('SANITY_READ_TOKEN')) {
           return text('Preview is not configured on this server.', 500)
         }
         const params = new URL(request.url).searchParams

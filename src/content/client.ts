@@ -1,6 +1,8 @@
 import { createClient } from '@sanity/client'
 import type { SanityClient } from '@sanity/client'
 
+import { serverSecret } from '@/lib/server-env'
+
 import { getSanityConfig } from './config'
 
 let publishedClient: SanityClient | undefined
@@ -17,7 +19,7 @@ export function getPublishedClient(): SanityClient {
 let previewClient: SanityClient | undefined
 
 export function getPreviewClient(): SanityClient {
-  const token = process.env.SANITY_READ_TOKEN
+  const token = serverSecret('SANITY_READ_TOKEN')
   if (!token) throw new Error('Set SANITY_READ_TOKEN to preview drafts')
   previewClient ??= createClient({
     ...getSanityConfig(),
