@@ -1,7 +1,7 @@
 export const NAV_LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/reports', label: 'Reports' },
-  { to: '/explore', label: 'Explore' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
+  { href: '/', label: 'Home' },
+  { href: '/reports', label: 'Reports' },
+  { href: '/explore', label: 'Explore' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
 ] as const

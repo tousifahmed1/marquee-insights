@@ -1,7 +1,6 @@
-import { Link } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 
-import { NAV_LINKS } from '@/components/nav-links'
+import { CmsLink } from '@/components/cms-link'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -12,8 +11,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { useSiteSettings } from '@/components/use-site-settings'
 
 export function MobileMenu() {
+  const { siteName, navLinks } = useSiteSettings()
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -25,21 +26,21 @@ export function MobileMenu() {
       <SheetContent side="right" className="px-gutter">
         <SheetHeader className="px-0 pt-6">
           <SheetTitle className="font-display text-2xl font-normal">
-            Marquee Insights
+            {siteName}
           </SheetTitle>
           <SheetDescription className="sr-only">Site navigation</SheetDescription>
         </SheetHeader>
         <nav aria-label="Main">
           <ul className="flex flex-col">
-            {NAV_LINKS.map((link) => (
-              <li key={link.to} className="border-b">
+            {navLinks.map((link) => (
+              <li key={link.href} className="border-b">
                 <SheetClose asChild>
-                  <Link
-                    to={link.to}
+                  <CmsLink
+                    href={link.href}
                     className="block py-4 text-xl text-muted-foreground hover:text-foreground aria-[current=page]:text-foreground"
                   >
                     {link.label}
-                  </Link>
+                  </CmsLink>
                 </SheetClose>
               </li>
             ))}

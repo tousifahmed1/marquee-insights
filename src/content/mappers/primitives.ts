@@ -56,7 +56,10 @@ function mapHotspot(raw: unknown): CmsImage['hotspot'] {
   const hotspot = record(raw)
   const x = finite(hotspot?.x)
   const y = finite(hotspot?.y)
-  return x === null || y === null ? null : { x, y }
+  const width = positive(hotspot?.width)
+  const height = positive(hotspot?.height)
+  if (x === null || y === null || width === null || height === null) return null
+  return { x, y, width, height }
 }
 
 function mapCrop(raw: unknown): CmsImage['crop'] {

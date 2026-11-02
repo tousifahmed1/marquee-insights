@@ -9,6 +9,7 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
+  envPrefix: ['VITE_', 'SANITY_STUDIO_'],
   plugins: [
     devtools(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),

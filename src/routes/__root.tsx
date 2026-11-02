@@ -10,6 +10,8 @@ import { Footer } from '@/components/footer'
 import { HydrationMarker } from '@/components/hydration-marker'
 import { Nav } from '@/components/nav'
 import { NotFound } from '@/components/not-found'
+import { siteSettingsQueryOptions } from '@/content/query-options'
+import { resolveSeo, seoHead } from '@/lib/seo'
 import { THEME_INIT_SCRIPT } from '@/lib/theme'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -26,7 +28,10 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: () => ({
+  beforeLoad: async ({ context }) => ({
+    siteSettings: await context.queryClient.ensureQueryData(siteSettingsQueryOptions),
+  }),
+  head: ({ match }) => ({
     meta: [
       {
         charSet: 'utf-8',
@@ -35,9 +40,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
-      {
-        title: 'Marquee Insights',
-      },
+      ...seoHead(resolveSeo(match.context.siteSettings)).meta,
     ],
     links: [
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

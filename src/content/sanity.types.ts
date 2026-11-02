@@ -377,7 +377,7 @@ export type AllSanitySchemaTypes =
 
 // Source: ../src/content/queries.ts
 // Variable: SITE_SETTINGS_QUERY
-// Query: *[_type == "siteSettings" && _id == "siteSettings"][0] {    siteName,    navLinks[] { _key, label, href },    footerLinks[] { _key, label, href },    defaultSeoTitle,    defaultSeoDescription,    defaultOgImage {   alt,  hotspot { x, y },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } }  }
+// Query: *[_type == "siteSettings" && _id == "siteSettings"][0] {    siteName,    navLinks[] { _key, label, href },    footerLinks[] { _key, label, href },    defaultSeoTitle,    defaultSeoDescription,    defaultOgImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } }  }
 export type SITE_SETTINGS_QUERY_RESULT = {
   siteName: string | null;
   navLinks: Array<{
@@ -397,6 +397,8 @@ export type SITE_SETTINGS_QUERY_RESULT = {
     hotspot: {
       x: number | null;
       y: number | null;
+      width: number | null;
+      height: number | null;
     } | null;
     crop: {
       top: number | null;
@@ -419,7 +421,7 @@ export type SITE_SETTINGS_QUERY_RESULT = {
 
 // Source: ../src/content/queries.ts
 // Variable: PAGE_BY_SLUG_QUERY
-// Query: *[_type == "page" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    sections[] {      _key,      _type,      _type == "hero" => {        eyebrow,        heading,        subheading,        primaryCta { label, href },        secondaryCta { label, href },        image {   alt,  hotspot { x, y },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } }      },      _type == "featureGrid" => {        heading,        items[] { _key, icon, title, text }      },      _type == "stats" => {        heading,        items[] { _key, value, label }      },      _type == "quote" => { text, author, role },      _type == "ctaBanner" => {        heading,        text,        button { label, href }      }    },    seo {   title,  description,  noindex,  ogImage {   alt,  hotspot { x, y },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } } }  }
+// Query: *[_type == "page" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    sections[] {      _key,      _type,      _type == "hero" => {        eyebrow,        heading,        subheading,        primaryCta { label, href },        secondaryCta { label, href },        image {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } }      },      _type == "featureGrid" => {        heading,        items[] { _key, icon, title, text }      },      _type == "stats" => {        heading,        items[] { _key, value, label }      },      _type == "quote" => { text, author, role },      _type == "ctaBanner" => {        heading,        text,        button { label, href }      }    },    seo {   title,  description,  noindex,  ogImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } } }  }
 export type PAGE_BY_SLUG_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -478,6 +480,8 @@ export type PAGE_BY_SLUG_QUERY_RESULT = {
           hotspot: {
             x: number | null;
             y: number | null;
+            width: number | null;
+            height: number | null;
           } | null;
           crop: {
             top: number | null;
@@ -524,6 +528,8 @@ export type PAGE_BY_SLUG_QUERY_RESULT = {
       hotspot: {
         x: number | null;
         y: number | null;
+        width: number | null;
+        height: number | null;
       } | null;
       crop: {
         top: number | null;
@@ -547,7 +553,7 @@ export type PAGE_BY_SLUG_QUERY_RESULT = {
 
 // Source: ../src/content/queries.ts
 // Variable: REPORTS_QUERY
-// Query: {    "items": *[  _type == "report"  && defined(slug.current)  && ($category == null || category == $category)] | order(publishedAt desc, _id asc) [$start...$end] {        _id,  title,  "slug": slug.current,  publishedAt,  category,  excerpt,  coverImage {   alt,  hotspot { x, y },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } }    },    "total": count(*[  _type == "report"  && defined(slug.current)  && ($category == null || category == $category)])  }
+// Query: {    "items": *[  _type == "report"  && defined(slug.current)  && ($category == null || category == $category)] | order(publishedAt desc, _id asc) [$start...$end] {        _id,  title,  "slug": slug.current,  publishedAt,  category,  excerpt,  coverImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } }    },    "total": count(*[  _type == "report"  && defined(slug.current)  && ($category == null || category == $category)])  }
 export type REPORTS_QUERY_RESULT = {
   items: Array<{
     _id: string;
@@ -561,6 +567,8 @@ export type REPORTS_QUERY_RESULT = {
       hotspot: {
         x: number | null;
         y: number | null;
+        width: number | null;
+        height: number | null;
       } | null;
       crop: {
         top: number | null;
@@ -585,7 +593,7 @@ export type REPORTS_QUERY_RESULT = {
 
 // Source: ../src/content/queries.ts
 // Variable: REPORT_BY_SLUG_QUERY
-// Query: *[_type == "report" && slug.current == $slug][0] {      _id,  title,  "slug": slug.current,  publishedAt,  category,  excerpt,  coverImage {   alt,  hotspot { x, y },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } },    body[] {      ...,      _type == "image" => {        _key,        _type,        caption,          alt,  hotspot { x, y },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } }      }    },    seo {   title,  description,  noindex,  ogImage {   alt,  hotspot { x, y },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } } }  }
+// Query: *[_type == "report" && slug.current == $slug][0] {      _id,  title,  "slug": slug.current,  publishedAt,  category,  excerpt,  coverImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } },    body[] {      ...,      _type == "image" => {        _key,        _type,        caption,          alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } }      }    },    seo {   title,  description,  noindex,  ogImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } } }  }
 export type REPORT_BY_SLUG_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -598,6 +606,8 @@ export type REPORT_BY_SLUG_QUERY_RESULT = {
     hotspot: {
       x: number | null;
       y: number | null;
+      width: number | null;
+      height: number | null;
     } | null;
     crop: {
       top: number | null;
@@ -650,6 +660,8 @@ export type REPORT_BY_SLUG_QUERY_RESULT = {
         hotspot: {
           x: number | null;
           y: number | null;
+          width: number | null;
+          height: number | null;
         } | null;
         crop: {
           top: number | null;
@@ -678,6 +690,8 @@ export type REPORT_BY_SLUG_QUERY_RESULT = {
       hotspot: {
         x: number | null;
         y: number | null;
+        width: number | null;
+        height: number | null;
       } | null;
       crop: {
         top: number | null;
@@ -702,10 +716,10 @@ export type REPORT_BY_SLUG_QUERY_RESULT = {
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    '\n  *[_type == "siteSettings" && _id == "siteSettings"][0] {\n    siteName,\n    navLinks[] { _key, label, href },\n    footerLinks[] { _key, label, href },\n    defaultSeoTitle,\n    defaultSeoDescription,\n    defaultOgImage { \n  alt,\n  hotspot { x, y },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n  }\n': SITE_SETTINGS_QUERY_RESULT;
-    '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    sections[] {\n      _key,\n      _type,\n      _type == "hero" => {\n        eyebrow,\n        heading,\n        subheading,\n        primaryCta { label, href },\n        secondaryCta { label, href },\n        image { \n  alt,\n  hotspot { x, y },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n      },\n      _type == "featureGrid" => {\n        heading,\n        items[] { _key, icon, title, text }\n      },\n      _type == "stats" => {\n        heading,\n        items[] { _key, value, label }\n      },\n      _type == "quote" => { text, author, role },\n      _type == "ctaBanner" => {\n        heading,\n        text,\n        button { label, href }\n      }\n    },\n    seo { \n  title,\n  description,\n  noindex,\n  ogImage { \n  alt,\n  hotspot { x, y },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n }\n  }\n': PAGE_BY_SLUG_QUERY_RESULT;
-    '\n  {\n    "items": *[\n  _type == "report"\n  && defined(slug.current)\n  && ($category == null || category == $category)\n] | order(publishedAt desc, _id asc) [$start...$end] {\n      \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  category,\n  excerpt,\n  coverImage { \n  alt,\n  hotspot { x, y },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n\n    },\n    "total": count(*[\n  _type == "report"\n  && defined(slug.current)\n  && ($category == null || category == $category)\n])\n  }\n': REPORTS_QUERY_RESULT;
-    '\n  *[_type == "report" && slug.current == $slug][0] {\n    \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  category,\n  excerpt,\n  coverImage { \n  alt,\n  hotspot { x, y },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n,\n    body[] {\n      ...,\n      _type == "image" => {\n        _key,\n        _type,\n        caption,\n        \n  alt,\n  hotspot { x, y },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n\n      }\n    },\n    seo { \n  title,\n  description,\n  noindex,\n  ogImage { \n  alt,\n  hotspot { x, y },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n }\n  }\n': REPORT_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "siteSettings" && _id == "siteSettings"][0] {\n    siteName,\n    navLinks[] { _key, label, href },\n    footerLinks[] { _key, label, href },\n    defaultSeoTitle,\n    defaultSeoDescription,\n    defaultOgImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n  }\n': SITE_SETTINGS_QUERY_RESULT;
+    '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    sections[] {\n      _key,\n      _type,\n      _type == "hero" => {\n        eyebrow,\n        heading,\n        subheading,\n        primaryCta { label, href },\n        secondaryCta { label, href },\n        image { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n      },\n      _type == "featureGrid" => {\n        heading,\n        items[] { _key, icon, title, text }\n      },\n      _type == "stats" => {\n        heading,\n        items[] { _key, value, label }\n      },\n      _type == "quote" => { text, author, role },\n      _type == "ctaBanner" => {\n        heading,\n        text,\n        button { label, href }\n      }\n    },\n    seo { \n  title,\n  description,\n  noindex,\n  ogImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n }\n  }\n': PAGE_BY_SLUG_QUERY_RESULT;
+    '\n  {\n    "items": *[\n  _type == "report"\n  && defined(slug.current)\n  && ($category == null || category == $category)\n] | order(publishedAt desc, _id asc) [$start...$end] {\n      \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  category,\n  excerpt,\n  coverImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n\n    },\n    "total": count(*[\n  _type == "report"\n  && defined(slug.current)\n  && ($category == null || category == $category)\n])\n  }\n': REPORTS_QUERY_RESULT;
+    '\n  *[_type == "report" && slug.current == $slug][0] {\n    \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  category,\n  excerpt,\n  coverImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n,\n    body[] {\n      ...,\n      _type == "image" => {\n        _key,\n        _type,\n        caption,\n        \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n\n      }\n    },\n    seo { \n  title,\n  description,\n  noindex,\n  ogImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n }\n  }\n': REPORT_BY_SLUG_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

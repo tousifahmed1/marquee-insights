@@ -12,7 +12,7 @@ const expectPolicy = (
   }
 }
 
-for (const { to } of NAV_LINKS) {
+for (const { href: to } of NAV_LINKS) {
   test(`${to} is cached at the edge as a content page`, async ({ request }) => {
     const response = await request.get(to)
     expect(response.status()).toBe(200)

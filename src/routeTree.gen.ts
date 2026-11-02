@@ -10,24 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as ContactRouteImport } from './routes/contact'
+import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ReportsIndexRouteImport } from './routes/reports.index'
+import { Route as ReportsSlugRouteImport } from './routes/reports.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -35,48 +30,53 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReportsRoute = ReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
+const ReportsIndexRoute = ReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsSlugRoute = ReportsSlugRouteImport.update({
+  id: '/reports/$slug',
+  path: '/reports/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
+  '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
-  '/reports': typeof ReportsRoute
+  '/reports/$slug': typeof ReportsSlugRoute
+  '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
+  '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
-  '/reports': typeof ReportsRoute
+  '/reports/$slug': typeof ReportsSlugRoute
+  '/reports': typeof ReportsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact': typeof ContactRoute
+  '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
-  '/reports': typeof ReportsRoute
+  '/reports/$slug': typeof ReportsSlugRoute
+  '/reports/': typeof ReportsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/contact' | '/explore' | '/reports'
+  fullPaths: '/' | '/$slug' | '/explore' | '/reports/$slug' | '/reports/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/contact' | '/explore' | '/reports'
-  id: '__root__' | '/' | '/about' | '/contact' | '/explore' | '/reports'
+  to: '/' | '/$slug' | '/explore' | '/reports/$slug' | '/reports'
+  id: '__root__' | '/' | '/$slug' | '/explore' | '/reports/$slug' | '/reports/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  ContactRoute: typeof ContactRoute
+  SlugRoute: typeof SlugRoute
   ExploreRoute: typeof ExploreRoute
-  ReportsRoute: typeof ReportsRoute
+  ReportsSlugRoute: typeof ReportsSlugRoute
+  ReportsIndexRoute: typeof ReportsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -88,18 +88,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -109,11 +102,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reports': {
-      id: '/reports'
+    '/reports/': {
+      id: '/reports/'
       path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof ReportsRouteImport
+      fullPath: '/reports/'
+      preLoaderRoute: typeof ReportsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports/$slug': {
+      id: '/reports/$slug'
+      path: '/reports/$slug'
+      fullPath: '/reports/$slug'
+      preLoaderRoute: typeof ReportsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -121,10 +121,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  ContactRoute: ContactRoute,
+  SlugRoute: SlugRoute,
   ExploreRoute: ExploreRoute,
-  ReportsRoute: ReportsRoute,
+  ReportsSlugRoute: ReportsSlugRoute,
+  ReportsIndexRoute: ReportsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

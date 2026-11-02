@@ -12,7 +12,7 @@ export type CmsImage = {
   width: number
   height: number
   lqip: string | null
-  hotspot: { x: number; y: number } | null
+  hotspot: { x: number; y: number; width: number; height: number } | null
   crop: { top: number; bottom: number; left: number; right: number } | null
 }
 

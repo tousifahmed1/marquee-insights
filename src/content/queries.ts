@@ -2,7 +2,7 @@ import { defineQuery } from 'groq'
 
 const IMAGE = /* groq */ `
   alt,
-  hotspot { x, y },
+  hotspot { x, y, width, height },
   crop { top, bottom, left, right },
   asset->{ _id, metadata { lqip, dimensions { width, height } } }
 `
