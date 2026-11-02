@@ -4,6 +4,10 @@
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  "vars": {
+    "SANITY_STUDIO_PROJECT_ID": "nr0aj61a",
+    "SANITY_STUDIO_DATASET": "production"
+  },
   "cache": {
     "enabled": true
   }

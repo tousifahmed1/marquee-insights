@@ -14,13 +14,15 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "pnpm run build && wrangler deploy",
-    "typecheck": "tsr generate && tsc --noEmit && pnpm --filter studio typecheck",
+    "typecheck": "tsr generate && pnpm typegen && tsc --noEmit && pnpm --filter studio typecheck",
     "lint": "eslint . && pnpm --filter studio lint",
     "test": "vitest run",
     "e2e": "playwright test",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm e2e"
+    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm e2e",
+    "typegen": "pnpm --filter studio typegen"
   },
   "dependencies": {
+    "@sanity/client": "^8.14.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "0.10.14",
     "@tanstack/react-query": "5.105.1",
@@ -31,6 +33,7 @@
     "@tanstack/react-start": "1.169.4",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.1",
+    "groq": "^6.21.0",
     "lucide-react": "^1.66.0",
     "radix-ui": "^1.8.1",
     "react": "^19.2.0",

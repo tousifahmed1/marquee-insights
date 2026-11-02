@@ -10,6 +10,11 @@ export default defineCliConfig({
     projectId: process.env.SANITY_STUDIO_PROJECT_ID,
     dataset: process.env.SANITY_STUDIO_DATASET,
   },
+  typegen: {
+    path: '../src/content/**/*.ts',
+    schema: 'schema.json',
+    generates: '../src/content/sanity.types.ts',
+  },
   deployment: {
     autoUpdates: true,
   },

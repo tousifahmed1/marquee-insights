@@ -9,7 +9,8 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "typecheck": "tsc --noEmit && sanity schema validate && sanity build --yes",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typegen": "sanity schema extract --force && sanity typegen generate"
   },
   "keywords": [
     "sanity"
