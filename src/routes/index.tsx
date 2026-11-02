@@ -11,8 +11,12 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { cacheHeaders } from '@/lib/cache-control'
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute('/')({
+  headers: () => cacheHeaders('content'),
+  component: Home,
+})
 
 const LATEST_REPORTS = [
   {

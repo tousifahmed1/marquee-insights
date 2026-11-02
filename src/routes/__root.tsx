@@ -9,6 +9,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Footer } from '@/components/footer'
 import { HydrationMarker } from '@/components/hydration-marker'
 import { Nav } from '@/components/nav'
+import { NotFound } from '@/components/not-found'
 import { THEME_INIT_SCRIPT } from '@/lib/theme'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -53,6 +54,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {

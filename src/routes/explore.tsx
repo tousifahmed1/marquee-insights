@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { PageIntro } from '@/components/page-intro'
+import { cacheHeaders } from '@/lib/cache-control'
 
 export const Route = createFileRoute('/explore')({
   head: () => ({ meta: [{ title: 'Explore the data | Marquee Insights' }] }),
+  headers: () => cacheHeaders('content'),
   component: ExplorePage,
 })
 

@@ -54,8 +54,11 @@ tests/               Playwright smoke tests
 - Images from the CMS always have alt text and explicit width and height.
 
 ### Caching
-- Content pages: `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`.
+- All cache policies live in `src/lib/cache-control.ts`. Routes opt in with `headers: () => cacheHeaders('content')`; never write cache headers by hand.
+- Content pages: edge `Cloudflare-CDN-Cache-Control: max-age=3600, stale-while-revalidate=86400`, browser `Cache-Control: public, max-age=0, must-revalidate`. Browsers revalidate so CMS purges reach visitors at once.
+- Never use `s-maxage`. Cloudflare disables `stale-while-revalidate` when it is present.
 - Preview, draft and data API routes: `Cache-Control: no-store`.
+- Workers caching is on (`wrangler.jsonc`), and Cloudflare caches responses with no `Cache-Control` for up to 2 hours. The global middleware in `src/start.ts` sets `no-store` on any response without a policy, a short edge cache on 404s and `no-store` on 5xx. Do not remove it.
 - Publishing in the CMS triggers a webhook that purges the affected URLs. Any new content type needs its URLs added to the purge mapping.
 - Cached pages must render the same HTML for every visitor. Never read cookies, headers or sessions into server-rendered markup on a cached route. Per-visitor state (like the theme) is applied on the client; see `src/lib/theme.ts`.
 
