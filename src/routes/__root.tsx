@@ -12,6 +12,9 @@ import appCss from '../styles/app.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 
+const GOOGLE_FONTS_URL =
+  'https://fonts.googleapis.com/css2?family=Gloock&family=Schibsted+Grotesk:wght@400..700&display=swap'
+
 interface MyRouterContext {
   queryClient: QueryClient
 }
@@ -31,6 +34,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
     links: [
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      { rel: 'stylesheet', href: GOOGLE_FONTS_URL },
       {
         rel: 'stylesheet',
         href: appCss,
@@ -42,7 +52,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>

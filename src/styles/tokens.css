@@ -1,0 +1,144 @@
+/*
+ * Marquee Insights design tokens.
+ * Primitives are raw values. Semantic tokens reference primitives and are the
+ * only layer components should use (through the Tailwind theme in app.css).
+ * Dark is the brand default; light is the inverted paper theme.
+ */
+
+:root {
+  /* Palette primitives */
+  --navy-950: #0f1b30;
+  --navy-900: #142340;
+  --navy-800: #1b2d50;
+  --navy-700: #26395f;
+  --navy-600: #344a75;
+  --navy-400: #6a7fac;
+
+  --paper-50: #faf6ee;
+  --paper-100: #f4eee2;
+  --paper-200: #e8dfce;
+  --paper-300: #d6cab4;
+
+  --stone-400: #b5ac9c;
+  --stone-500: #8a806e;
+  --stone-600: #5f594d;
+
+  --amber-400: #ffb627;
+  --amber-500: #f29f05;
+  --amber-700: #9a5b00;
+
+  --red-400: #ef6b6f;
+  --red-600: #c62a2f;
+
+  /* Data series, deep for paper and light for navy */
+  --sky-600: #2f7fc4;
+  --sky-300: #5fa8e8;
+  --rose-600: #c9506a;
+  --rose-300: #e77a8c;
+  --sage-600: #3f8f5e;
+  --sage-300: #7fbf95;
+  --lilac-600: #6e5bc8;
+  --lilac-300: #a391e6;
+
+  /* Typefaces */
+  --font-family-display: "Gloock", "Iowan Old Style", Georgia, serif;
+  --font-family-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-family-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Type scale: classic 12 / 14 / 16 / 18 / 21 / 24 / 36, display sizes are fluid */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.3125rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2.25rem;
+  --font-size-4xl: clamp(2.25rem, 1.5rem + 3vw, 3rem);
+  --font-size-5xl: clamp(2.75rem, 1.75rem + 4vw, 3.75rem);
+  --font-size-6xl: clamp(3rem, 1.5rem + 6vw, 4.5rem);
+
+  --line-height-tight: 1.04;
+  --line-height-snug: 1.2;
+  --line-height-body: 1.6;
+
+  --tracking-display: -0.015em;
+  --tracking-body: 0;
+
+  /* Spacing: Tailwind's numeric scale multiplies --space-unit */
+  --space-unit: 0.25rem;
+  --space-gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --space-section: clamp(4rem, 10vw, 8rem);
+
+  /* Layout widths */
+  --width-page: 76rem;
+  --width-prose: 40rem;
+
+  /* Radius: tight and editorial, hierarchy comes from the shadcn calc scale */
+  --radius: 0.375rem;
+}
+
+:root {
+  --background: var(--paper-100);
+  --foreground: var(--navy-900);
+  --card: var(--paper-50);
+  --card-foreground: var(--navy-900);
+  --popover: var(--paper-50);
+  --popover-foreground: var(--navy-900);
+  --primary: var(--amber-400);
+  --primary-foreground: var(--navy-950);
+  --secondary: var(--paper-200);
+  --secondary-foreground: var(--navy-900);
+  --muted: var(--paper-200);
+  --muted-foreground: var(--stone-600);
+  --accent: var(--paper-200);
+  --accent-foreground: var(--navy-900);
+  --highlight: var(--amber-700);
+  --destructive: var(--red-600);
+  --border: var(--paper-300);
+  --input: var(--stone-500);
+  --ring: var(--amber-700);
+
+  --chart-1: var(--amber-500);
+  --chart-2: var(--sky-600);
+  --chart-3: var(--rose-600);
+  --chart-4: var(--sage-600);
+  --chart-5: var(--lilac-600);
+
+  --shadow-color: 220 45% 15%;
+  --elevation-sm: 0 1px 2px hsl(var(--shadow-color) / 0.08);
+  --elevation-md: 0 4px 12px -2px hsl(var(--shadow-color) / 0.12);
+  --elevation-lg: 0 18px 40px -12px hsl(var(--shadow-color) / 0.2);
+}
+
+.dark {
+  --background: var(--navy-900);
+  --foreground: var(--paper-100);
+  --card: var(--navy-800);
+  --card-foreground: var(--paper-100);
+  --popover: var(--navy-800);
+  --popover-foreground: var(--paper-100);
+  --primary: var(--amber-400);
+  --primary-foreground: var(--navy-950);
+  --secondary: var(--navy-700);
+  --secondary-foreground: var(--paper-100);
+  --muted: var(--navy-800);
+  --muted-foreground: var(--stone-400);
+  --accent: var(--navy-700);
+  --accent-foreground: var(--paper-100);
+  --highlight: var(--amber-400);
+  --destructive: var(--red-400);
+  --border: var(--navy-600);
+  --input: var(--navy-400);
+  --ring: var(--amber-400);
+
+  --chart-1: var(--amber-400);
+  --chart-2: var(--sky-300);
+  --chart-3: var(--rose-300);
+  --chart-4: var(--sage-300);
+  --chart-5: var(--lilac-300);
+
+  --shadow-color: 222 60% 6%;
+  --elevation-sm: 0 1px 2px hsl(var(--shadow-color) / 0.35);
+  --elevation-md: 0 4px 12px -2px hsl(var(--shadow-color) / 0.45);
+  --elevation-lg: 0 18px 40px -12px hsl(var(--shadow-color) / 0.6);
+}
