@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as PreviewRouteImport } from './routes/preview'
+import { Route as ApiRevalidateRouteImport } from './routes/api.revalidate'
 import { Route as PreviewIndexRouteImport } from './routes/preview.index'
 import { Route as PreviewSlugRouteImport } from './routes/preview.$slug'
 import { Route as ReportsIndexRouteImport } from './routes/reports.index'
@@ -39,6 +40,11 @@ const ExploreRoute = ExploreRouteImport.update({
 const PreviewRoute = PreviewRouteImport.update({
   id: '/preview',
   path: '/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRevalidateRoute = ApiRevalidateRouteImport.update({
+  id: '/api/revalidate',
+  path: '/api/revalidate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreviewIndexRoute = PreviewIndexRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
   '/preview': typeof PreviewRouteWithChildren
+  '/api/revalidate': typeof ApiRevalidateRoute
   '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
   '/preview/': typeof PreviewIndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
+  '/api/revalidate': typeof ApiRevalidateRoute
   '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
   '/preview': typeof PreviewIndexRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
   '/preview': typeof PreviewRouteWithChildren
+  '/api/revalidate': typeof ApiRevalidateRoute
   '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
   '/preview/': typeof PreviewIndexRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/explore'
     | '/preview'
+    | '/api/revalidate'
     | '/preview/$slug'
     | '/reports/$slug'
     | '/preview/'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/explore'
+    | '/api/revalidate'
     | '/preview/$slug'
     | '/reports/$slug'
     | '/preview'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/explore'
     | '/preview'
+    | '/api/revalidate'
     | '/preview/$slug'
     | '/reports/$slug'
     | '/preview/'
@@ -162,6 +174,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   ExploreRoute: typeof ExploreRoute
   PreviewRoute: typeof PreviewRouteWithChildren
+  ApiRevalidateRoute: typeof ApiRevalidateRoute
   ReportsSlugRoute: typeof ReportsSlugRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
   ApiPreviewEnableRoute: typeof ApiPreviewEnableRoute
@@ -196,6 +209,13 @@ declare module '@tanstack/react-router' {
       path: '/preview'
       fullPath: '/preview'
       preLoaderRoute: typeof PreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/revalidate': {
+      id: '/api/revalidate'
+      path: '/api/revalidate'
+      fullPath: '/api/revalidate'
+      preLoaderRoute: typeof ApiRevalidateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview/': {
@@ -270,6 +290,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   ExploreRoute: ExploreRoute,
   PreviewRoute: PreviewRouteWithChildren,
+  ApiRevalidateRoute: ApiRevalidateRoute,
   ReportsSlugRoute: ReportsSlugRoute,
   ReportsIndexRoute: ReportsIndexRoute,
   ApiPreviewEnableRoute: ApiPreviewEnableRoute,

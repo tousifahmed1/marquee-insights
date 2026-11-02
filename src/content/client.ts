@@ -8,9 +8,11 @@ import { getSanityConfig } from './config'
 let publishedClient: SanityClient | undefined
 
 export function getPublishedClient(): SanityClient {
+  // Rendered pages are cached in KV, so reads skip Sanity's CDN: it can lag a
+  // publish by a few seconds and the first render after a purge must be fresh.
   publishedClient ??= createClient({
     ...getSanityConfig(),
-    useCdn: true,
+    useCdn: false,
     perspective: 'published',
   })
   return publishedClient

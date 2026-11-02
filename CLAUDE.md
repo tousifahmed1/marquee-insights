@@ -25,6 +25,7 @@ Marketing site and data explorer for a fictional entertainment audience research
 - `pnpm db:explain` runs the explorer queries for typical filter combinations with `EXPLAIN ANALYZE` and fails if any takes 200ms or more in Postgres
 - `pnpm deploy` builds and deploys to Cloudflare. It always rebuilds, so never run `wrangler deploy` on its own: a stale `dist/` ships old code
 - `pnpm check:prod` checks every route on the live site after a deploy (pass a URL to check another server)
+- `pnpm webhook:test <url>` sends a signed publish webhook to `<url>/api/revalidate`, using `SANITY_WEBHOOK_SECRET` from `.env`
 
 **Always run `pnpm verify` before saying a task is done. If it fails, fix it. Never skip or weaken a check to make it pass.**
 
@@ -70,7 +71,7 @@ tests/               Playwright smoke tests
 
 ### Environment
 - `SANITY_STUDIO_*` values are public: Vite builds them into the browser bundle (the image URL builder needs them) and the Studio does the same. `.env` must exist when you build or deploy.
-- Secrets (`DATABASE_URL`, `SANITY_READ_TOKEN`, `SANITY_PREVIEW_SECRET`) are read at runtime with `serverSecret()` from `src/lib/server-env.ts`, which reads the Worker bindings. Never read them from `process.env`: it works in development but is empty on deployed Workers. Never give them the `SANITY_STUDIO_` prefix. In production they are Worker secrets (`wrangler secret put`); locally they come from `.env`.
+- Secrets (`DATABASE_URL`, `SANITY_READ_TOKEN`, `SANITY_PREVIEW_SECRET`, `SANITY_WEBHOOK_SECRET`) are read at runtime with `serverSecret()` from `src/lib/server-env.ts`, which reads the Worker bindings. Never read them from `process.env`: it works in development but is empty on deployed Workers. Never give them the `SANITY_STUDIO_` prefix. In production they are Worker secrets (`wrangler secret put`); locally they come from `.env`.
 - `src/lib/server-env.ts` imports `cloudflare:workers`, so only server-only modules (server function handlers, server routes, `src/data`, `src/content` clients) may import it, never a component.
 - Server functions are protected by TanStack Start's CSRF middleware in `src/start.ts`.
 
@@ -99,7 +100,10 @@ tests/               Playwright smoke tests
 - Preview, draft, data API routes and `/explore`: `Cache-Control: no-store`.
 - Per-visitor content can never share a URL with a cached page: the cache key ignores cookies. That is why draft preview lives under `/preview/*`. The middleware forces `no-store` on every `/preview` and `/api/preview` response, whatever the status.
 - The global middleware in `src/start.ts` sets `no-store` on any response without a policy, a short shared cache on 404s and `no-store` on 5xx. Do not remove it.
-- Not built yet: publishing in the CMS should bump the content version. Until then, published changes reach the site when a cached page expires (a day) or on the next deploy (or secret change), which starts a new release. Any new content type needs its URLs added to the purge mapping once it exists.
+- Publishing in Sanity calls `POST /api/revalidate` (a Sanity webhook, set up as described in `README.md`). It checks the `sanity-webhook-signature` header against `SANITY_WEBHOOK_SECRET`, then writes the publish time as the new content version, so every cached page renders again on its next request (within about 60 seconds everywhere, as KV reads are cached that long). It also logs the document and the URLs it affects from `affectedUrls()` in `src/lib/purge-map.ts`, which is what a CDN with per-URL purging would invalidate.
+- A new content type, or a new URL a document appears on, needs a case in `affectedUrls()` and in `purge-map.test.ts`, and its fields in the webhook projection in `README.md` if the mapping reads them.
+- The published Sanity client reads the live API (`useCdn: false`), not Sanity's CDN, so the first render after a purge never picks up content from before the publish.
+- `pnpm webhook:test <url> [type] [slug]` sends a signed test webhook, for example to a production build running in `wrangler dev`.
 - Cached pages must render the same HTML for every visitor. Never read cookies, headers or sessions into server-rendered markup on a cached route. Per-visitor state (like the theme) is applied on the client; see `src/lib/theme.ts`.
 
 ### Styling and motion
@@ -117,7 +121,7 @@ tests/               Playwright smoke tests
 - E2e tests open pages with `gotoHydrated()` from `tests/helpers.ts` before clicking or typing, so they never act before React is interactive.
 - E2e tests run against the real Sanity dataset. Assert structure and behaviour (one h1, cards link to reports, 404s), not seeded wording, so editing content never breaks the build.
 - After a client-side navigation, wait for something that only the new page renders before reading the page. The URL changes before the loader finishes.
-- `playwright.config.ts` loads `.env`; the preview test needs `SANITY_PREVIEW_SECRET` and the explorer tests need `DATABASE_URL` with seeded data (`pnpm seed`). Both fail without them.
+- `playwright.config.ts` loads `.env`; the preview test needs `SANITY_PREVIEW_SECRET`, the webhook test needs `SANITY_WEBHOOK_SECRET` and the explorer tests need `DATABASE_URL` with seeded data (`pnpm seed`). Both fail without them.
 - Explorer logic is tested without a database: Zod schemas in `filters.test.ts`, URL cleaning in `search.test.ts`, and the query builder compiled to SQL text and parameters in `query-builder.test.ts`. A new filter needs a case in all three.
 
 ### Code

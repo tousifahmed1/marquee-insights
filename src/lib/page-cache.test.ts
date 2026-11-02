@@ -4,6 +4,7 @@ import { cacheHeaders } from './cache-control'
 import {
   CONTENT_VERSION_KEY,
   PAGE_TTL_SECONDS,
+  bumpContentVersion,
   cacheablePath,
   pageCacheKey,
   servePage,
@@ -176,5 +177,13 @@ describe('servePage', () => {
   it('renders without caching when there is no cache, as in development', async () => {
     const response = page('<h1>About</h1>')
     expect(await servePage(get('/about'), async () => response, null)).toBe(response)
+  })
+})
+
+describe('bumpContentVersion', () => {
+  it('stores the publish time as the new content version', async () => {
+    const { cache, entries } = memoryCache()
+    await expect(bumpContentVersion(cache.kv, 1_793_620_000_000)).resolves.toBe('1793620000000')
+    expect(entries.get(CONTENT_VERSION_KEY)?.value).toBe('1793620000000')
   })
 })

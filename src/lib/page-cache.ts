@@ -123,3 +123,15 @@ export async function servePage(
   )
   return withCacheStatus(new Response(body, response), 'MISS')
 }
+
+// The new version is the publish time rather than old + 1: KV reads can be up
+// to 60 seconds stale, so incrementing could repeat a version and leave pages
+// from a second publish cached.
+export async function bumpContentVersion(
+  kv: Pick<PageCacheKv, 'put'>,
+  now = Date.now(),
+): Promise<string> {
+  const version = String(now)
+  await kv.put(CONTENT_VERSION_KEY, version)
+  return version
+}
