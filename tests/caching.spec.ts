@@ -12,11 +12,22 @@ const expectPolicy = (
   }
 }
 
-for (const { href: to } of NAV_LINKS) {
+const UNCACHED_PATHS = new Set(['/explore'])
+
+for (const { href: to } of NAV_LINKS.filter(({ href }) => !UNCACHED_PATHS.has(href))) {
   test(`${to} is cached at the edge as a content page`, async ({ request }) => {
     const response = await request.get(to)
     expect(response.status()).toBe(200)
     expectPolicy(response.headers(), CACHE_POLICIES.content)
+  })
+}
+
+for (const to of ['/explore', '/explore?platform=tidewell&sort=intent']) {
+  test(`${to} is never cached`, async ({ request }) => {
+    const response = await request.get(to)
+    expect(response.status()).toBe(200)
+    expectPolicy(response.headers(), CACHE_POLICIES.noStore)
+    expect(response.headers()['cloudflare-cdn-cache-control']).toBeUndefined()
   })
 }
 

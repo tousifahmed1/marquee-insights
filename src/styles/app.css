@@ -79,6 +79,11 @@
   --container-page: var(--width-page);
   --container-prose: var(--width-prose);
   --container-sheet: var(--width-sheet);
+  --container-filters: var(--width-filters);
+
+  --spacing-chart: var(--height-chart);
+  --spacing-table: var(--height-table);
+  --spacing-sheet: var(--height-sheet);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -133,5 +138,26 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+@layer components {
+  .chart-frame .recharts-cartesian-axis-tick-value,
+  .chart-frame .recharts-label-list text {
+    fill: var(--muted-foreground);
+    font-size: var(--font-size-xs);
+  }
+
+  .chart-frame .recharts-label-list text {
+    fill: var(--foreground);
+  }
+
+  .chart-frame .recharts-cartesian-grid line {
+    stroke: var(--border);
+  }
+
+  .chart-frame .recharts-surface:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
   }
 }

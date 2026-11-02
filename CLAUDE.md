@@ -80,11 +80,17 @@ tests/               Playwright smoke tests
 - Run `pnpm db:explain` after changing a query or an index. Add an index rather than accept a query over 200ms.
 - Server-only packages used in development (like drizzle and zod) are listed in `environments.ssr.optimizeDeps.include` in `vite.config.ts`. Add new ones there, or Vite reloads mid-request on a cold start and breaks e2e runs.
 
+### Data explorer
+- `/explore` keeps every filter, sort and page in the URL. `cleanSearch()` in `src/data/search.ts` validates them: invalid values are dropped, defaults are left out of the URL and an inverted wave range is swapped. Changing a filter resets the page.
+- The loader awaits the data on first load, so the server renders real rows and charts. On a search change (`cause === 'stay'`) it only prefetches; components read through `useQuery` with `keepPreviousData`, so the previous results stay on screen with an "Updating" indicator. Don't await in the loader for `stay`, or the controls lag behind the URL.
+- Charts use Recharts 2.15 because Recharts 3 renders nothing on the server. Axes, bars and tooltips must be direct children of the chart (no fragments or wrapper components), every chart gets `id={useId()}` so clip-path ids match after hydration, and every chart has a visually hidden data table.
+- Radix `Select` only fills in its value after hydration. Pass the selected label as `SelectValue` children so the server renders it.
+
 ### Caching
 - All cache policies live in `src/lib/cache-control.ts`. Routes opt in with `headers: () => cacheHeaders('content')`; never write cache headers by hand.
 - Content pages: edge `Cloudflare-CDN-Cache-Control: max-age=3600, stale-while-revalidate=86400`, browser `Cache-Control: public, max-age=0, must-revalidate`. Browsers revalidate so CMS purges reach visitors at once.
 - Never use `s-maxage`. Cloudflare disables `stale-while-revalidate` when it is present.
-- Preview, draft and data API routes: `Cache-Control: no-store`.
+- Preview, draft, data API routes and `/explore`: `Cache-Control: no-store`.
 - The Workers cache is checked before the Worker runs and ignores cookies, so per-visitor content can never share a URL with a cached page. That is why draft preview lives under `/preview/*`. The middleware forces `no-store` on every `/preview` and `/api/preview` response, whatever the status.
 - Workers caching is on (`wrangler.jsonc`), and Cloudflare caches responses with no `Cache-Control` for up to 2 hours. The global middleware in `src/start.ts` sets `no-store` on any response without a policy, a short edge cache on 404s and `no-store` on 5xx. Do not remove it.
 - Not built yet: publishing in the CMS should trigger a webhook that purges the affected URLs. Until then, published changes reach the site within the hour (edge `max-age`) or on the next deploy. Any new content type needs its URLs added to the purge mapping once it exists.

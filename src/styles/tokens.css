@@ -73,6 +73,12 @@
   --width-page: 76rem;
   --width-prose: 40rem;
   --width-sheet: 24rem;
+  --width-filters: 16rem;
+
+  /* Data views */
+  --height-chart: 16rem;
+  --height-table: 70vh;
+  --height-sheet: 85dvh;
 
   /* Radius: tight and editorial, hierarchy comes from the shadcn calc scale */
   --radius: 0.375rem;
