@@ -16,6 +16,7 @@ Marketing site and data explorer for a fictional entertainment audience research
 
 - `pnpm dev` starts the dev server on port 3000
 - `pnpm verify` runs typecheck, lint, unit tests and the Playwright smoke test
+- `pnpm e2e` starts its own dev server on port 3100 (strict), separate from `pnpm dev`
 - `pnpm seed` regenerates and loads the synthetic survey data
 - `pnpm deploy` deploys to Cloudflare
 
@@ -56,12 +57,17 @@ tests/               Playwright smoke tests
 - Content pages: `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`.
 - Preview, draft and data API routes: `Cache-Control: no-store`.
 - Publishing in the CMS triggers a webhook that purges the affected URLs. Any new content type needs its URLs added to the purge mapping.
+- Cached pages must render the same HTML for every visitor. Never read cookies, headers or sessions into server-rendered markup on a cached route. Per-visitor state (like the theme) is applied on the client; see `src/lib/theme.ts`.
 
 ### Styling and motion
 - Use theme tokens from `src/styles`. No hard-coded colors, font sizes or spacing values.
-- Use shadcn components before writing new primitives.
+- Tailwind's default palette and scales are removed, so `bg-blue-500` or `text-7xl` will not compile. Add new values as tokens in `src/styles/tokens.css` first, then map them in `src/styles/app.css`.
+- Use shadcn components before writing new primitives. Add them with `pnpm dlx shadcn@latest add <name>`. Do not run `shadcn init`; the project is already configured.
 - Every animation respects `prefers-reduced-motion`.
 - Motion supports the content. No animation that delays reading or interaction.
+
+### Testing
+- E2e tests open pages with `gotoHydrated()` from `tests/helpers.ts` before clicking or typing, so they never act before React is interactive.
 
 ### Code
 - TypeScript strict mode. No `any` without a comment explaining why.
