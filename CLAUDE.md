@@ -20,7 +20,8 @@ Marketing site and data explorer for a fictional entertainment audience research
 - `pnpm studio` runs the Sanity Studio on port 3333
 - `pnpm typegen` regenerates GROQ result types into `src/content/sanity.types.ts` (also run by `pnpm typecheck`)
 - `pnpm seed:content` writes the seed pages and reports to Sanity using your Sanity CLI login. Safe to re-run
-- `pnpm seed` regenerates and loads the synthetic survey data (not built yet)
+- `pnpm seed` clears and reloads the synthetic survey data in Neon (40 shows, 50,000 responses). Safe to re-run
+- `pnpm db:generate` creates a migration from `src/data/schema.ts`; `pnpm db:migrate` applies it
 - `pnpm deploy` deploys to Cloudflare
 
 **Always run `pnpm verify` before saying a task is done. If it fails, fix it. Never skip or weaken a check to make it pass.**

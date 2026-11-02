@@ -10,6 +10,7 @@
     "studio": "pnpm --filter studio dev",
     "studio:build": "pnpm --filter studio build",
     "studio:deploy": "pnpm --filter studio deploy",
+    "seed": "tsx scripts/seed.ts",
     "seed:content": "pnpm --filter studio exec sanity exec ../scripts/seed-content/index.ts --with-user-token",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
