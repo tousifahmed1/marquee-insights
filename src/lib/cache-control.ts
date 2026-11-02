@@ -1,19 +1,14 @@
 import { isPreviewUrlPath } from '@/lib/preview-session'
 
-// Browsers always revalidate HTML so CMS purges reach visitors at once. The edge
-// policy lives in Cloudflare-CDN-Cache-Control, which Cloudflare strips before
-// responding. Cloudflare ignores stale-while-revalidate when s-maxage is
-// present, so the edge window uses max-age.
-const BROWSER_REVALIDATE = 'public, max-age=0, must-revalidate'
-
+// s-maxage is for shared caches only, so browsers keep revalidating HTML while a
+// CDN may hold it for an hour. On workers.dev the Workers cache is off and
+// rendered pages are cached in KV instead (see page-cache-store.ts).
 export const CACHE_POLICIES = {
   content: {
-    'Cache-Control': BROWSER_REVALIDATE,
-    'Cloudflare-CDN-Cache-Control': 'max-age=3600, stale-while-revalidate=86400',
+    'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
   },
   notFound: {
-    'Cache-Control': BROWSER_REVALIDATE,
-    'Cloudflare-CDN-Cache-Control': 'max-age=300',
+    'Cache-Control': 'public, s-maxage=300',
   },
   noStore: {
     'Cache-Control': 'no-store',
@@ -26,8 +21,8 @@ export function cacheHeaders(policy: CachePolicy): Record<string, string> {
   return { ...CACHE_POLICIES[policy] }
 }
 
-// With Workers caching on, Cloudflare caches responses that have no
-// Cache-Control for up to 2 hours, so every response needs a policy.
+// Every response gets an explicit policy, so a CDN in front of the site never
+// falls back to its own defaults (Cloudflare caches responses without one).
 export function applyDefaultCachePolicy(
   headers: Headers,
   status: number,
@@ -43,7 +38,6 @@ export function applyDefaultCachePolicy(
 }
 
 function setPolicy(headers: Headers, policy: CachePolicy) {
-  headers.delete('Cloudflare-CDN-Cache-Control')
   for (const [name, value] of Object.entries(CACHE_POLICIES[policy])) {
     headers.set(name, value)
   }

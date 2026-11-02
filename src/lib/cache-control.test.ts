@@ -9,16 +9,15 @@ import {
 const headersOf = (headers: Headers) => Object.fromEntries(headers.entries())
 
 describe('cacheHeaders', () => {
-  it('caches content at the edge with stale-while-revalidate and makes browsers revalidate', () => {
+  it('lets shared caches keep content for an hour and serve it stale while revalidating', () => {
     expect(cacheHeaders('content')).toEqual({
-      'Cache-Control': 'public, max-age=0, must-revalidate',
-      'Cloudflare-CDN-Cache-Control': 'max-age=3600, stale-while-revalidate=86400',
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
     })
   })
 
-  it('never uses s-maxage, which disables stale-while-revalidate on Cloudflare', () => {
+  it('never lets browsers cache HTML themselves, so a purge reaches visitors at once', () => {
     for (const policy of Object.values(CACHE_POLICIES)) {
-      expect(Object.values(policy).join(' ')).not.toContain('s-maxage')
+      expect(policy['Cache-Control']).not.toMatch(/(^|[ ,])max-age=[1-9]/)
     }
   })
 

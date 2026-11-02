@@ -9,4 +9,5 @@ interface ImportMeta {
 
 declare module 'cloudflare:workers' {
   export const env: Readonly<Record<string, unknown>>
+  export function waitUntil(promise: Promise<unknown>): void
 }

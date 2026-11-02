@@ -91,12 +91,15 @@ tests/               Playwright smoke tests
 
 ### Caching
 - All cache policies live in `src/lib/cache-control.ts`. Routes opt in with `headers: () => cacheHeaders('content')`; never write cache headers by hand.
-- Content pages: edge `Cloudflare-CDN-Cache-Control: max-age=3600, stale-while-revalidate=86400`, browser `Cache-Control: public, max-age=0, must-revalidate`. Browsers revalidate so CMS purges reach visitors at once.
-- Never use `s-maxage`. Cloudflare disables `stale-while-revalidate` when it is present.
+- Content pages send `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`, which is right for a real CDN later. `s-maxage` only applies to shared caches, so browsers always revalidate HTML. Never give HTML a browser `max-age`, or a publish will not reach visitors at once.
+- Rendered content pages are cached in Workers KV (`PAGE_CACHE`). `src/server.ts` wraps every request in `servePage()` from `src/lib/page-cache.ts`: it looks up `page:<release>:v<version>:<path>` and sends `x-cache: HIT` or `MISS`. The release is the deployed Worker version (`CF_VERSION_METADATA`), so a deploy never serves HTML pointing at old assets; the version is the `content-version` key in KV, bumped to invalidate every page at once. A page is stored (for a day) only when it is a 200 HTML response with the content policy, so a route opts in by using `cacheHeaders('content')`.
+- `cacheablePath()` decides which URLs are looked up. `/explore`, `/api`, `/_serverFn`, `/preview` and files are never cached, and query strings are only cached when they are canonical (only `category` and `page` on `/reports`). A new route with search params needs its params added to `CACHEABLE_SEARCH`, or it is rendered on every request.
+- The page cache is off in development (`getPageCache()` returns null) so changes show at once. Test it with a production build: `pnpm build && pnpm wrangler dev -c dist/server/wrangler.json`.
+- The Workers cache is off in `wrangler.jsonc`. It runs before the Worker and cannot be purged on workers.dev, so with `s-maxage` it would keep serving pages for an hour after a publish.
 - Preview, draft, data API routes and `/explore`: `Cache-Control: no-store`.
-- The Workers cache is checked before the Worker runs and ignores cookies, so per-visitor content can never share a URL with a cached page. That is why draft preview lives under `/preview/*`. The middleware forces `no-store` on every `/preview` and `/api/preview` response, whatever the status.
-- Workers caching is on (`wrangler.jsonc`), and Cloudflare caches responses with no `Cache-Control` for up to 2 hours. The global middleware in `src/start.ts` sets `no-store` on any response without a policy, a short edge cache on 404s and `no-store` on 5xx. Do not remove it.
-- Not built yet: publishing in the CMS should trigger a webhook that purges the affected URLs. Until then, published changes reach the site within the hour (edge `max-age`) or on the next deploy. Any new content type needs its URLs added to the purge mapping once it exists.
+- Per-visitor content can never share a URL with a cached page: the cache key ignores cookies. That is why draft preview lives under `/preview/*`. The middleware forces `no-store` on every `/preview` and `/api/preview` response, whatever the status.
+- The global middleware in `src/start.ts` sets `no-store` on any response without a policy, a short shared cache on 404s and `no-store` on 5xx. Do not remove it.
+- Not built yet: publishing in the CMS should bump the content version. Until then, published changes reach the site when a cached page expires (a day) or on the next deploy (or secret change), which starts a new release. Any new content type needs its URLs added to the purge mapping once it exists.
 - Cached pages must render the same HTML for every visitor. Never read cookies, headers or sessions into server-rendered markup on a cached route. Per-visitor state (like the theme) is applied on the client; see `src/lib/theme.ts`.
 
 ### Styling and motion

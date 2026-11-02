@@ -3,13 +3,28 @@
   "name": "marquee-insights",
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry",
+  "main": "src/server.ts",
   // Runs the Worker near the Neon database (us-east-1) when that is faster
-  // than running it near the visitor. Edge-cached pages are unaffected.
+  // than running it near the visitor.
   "placement": {
     "mode": "smart"
   },
+  // Rendered content pages are cached in KV (src/lib/page-cache-store.ts) so a
+  // publish can invalidate them. The Workers cache runs before the Worker and
+  // cannot be purged on workers.dev, so it stays off or it would serve pages
+  // for up to s-maxage after a publish.
   "cache": {
-    "enabled": true
-  }
+    "enabled": false
+  },
+  // Part of every page cache key, so a deploy never serves HTML that points at
+  // the previous build's assets.
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "PAGE_CACHE",
+      "id": "a1116efc0bbd4da4943a61ed988721e5"
+    }
+  ]
 }
