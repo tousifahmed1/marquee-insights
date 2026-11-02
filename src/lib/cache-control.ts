@@ -1,3 +1,5 @@
+import { isPreviewUrlPath } from '@/lib/preview-session'
+
 // Browsers always revalidate HTML so CMS purges reach visitors at once. The edge
 // policy lives in Cloudflare-CDN-Cache-Control, which Cloudflare strips before
 // responding. Cloudflare ignores stale-while-revalidate when s-maxage is
@@ -26,8 +28,12 @@ export function cacheHeaders(policy: CachePolicy): Record<string, string> {
 
 // With Workers caching on, Cloudflare caches responses that have no
 // Cache-Control for up to 2 hours, so every response needs a policy.
-export function applyDefaultCachePolicy(headers: Headers, status: number) {
-  if (status >= 500) {
+export function applyDefaultCachePolicy(
+  headers: Headers,
+  status: number,
+  pathname = '/',
+) {
+  if (status >= 500 || isPreviewUrlPath(pathname)) {
     setPolicy(headers, 'noStore')
   } else if (status === 404) {
     setPolicy(headers, 'notFound')

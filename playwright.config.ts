@@ -1,4 +1,8 @@
+import { existsSync } from 'node:fs'
+
 import { defineConfig, devices } from '@playwright/test'
+
+if (existsSync('.env')) process.loadEnvFile('.env')
 
 const PORT = 3100
 const baseURL = `http://localhost:${PORT}`

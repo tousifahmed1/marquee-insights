@@ -2,9 +2,13 @@ import { createCsrfMiddleware, createMiddleware, createStart } from '@tanstack/r
 
 import { applyDefaultCachePolicy } from '@/lib/cache-control'
 
-const cachePolicyMiddleware = createMiddleware().server(async ({ next }) => {
+const cachePolicyMiddleware = createMiddleware().server(async ({ next, request }) => {
   const result = await next()
-  applyDefaultCachePolicy(result.response.headers, result.response.status)
+  applyDefaultCachePolicy(
+    result.response.headers,
+    result.response.status,
+    new URL(request.url).pathname,
+  )
   return result
 })
 

@@ -1,6 +1,7 @@
+import { notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 
-import { getPublishedClient } from './client'
+import { getPreviewClient, getPublishedClient } from './client'
 import { REPORTS_PAGE_SIZE } from './config'
 import { parseReportsInput, parseSlugInput } from './inputs'
 import {
@@ -9,12 +10,23 @@ import {
   mapReportList,
   mapSiteSettings,
 } from './mappers'
+import { isPreviewEnabled } from './preview'
 import {
   PAGE_BY_SLUG_QUERY,
   REPORTS_QUERY,
   REPORT_BY_SLUG_QUERY,
   SITE_SETTINGS_QUERY,
 } from './queries'
+
+async function clientFor(preview: boolean) {
+  if (!preview) return getPublishedClient()
+  if (!(await isPreviewEnabled())) throw notFound()
+  return getPreviewClient()
+}
+
+export const getPreviewStatus = createServerFn({ method: 'GET' }).handler(() =>
+  isPreviewEnabled(),
+)
 
 export const getSiteSettings = createServerFn({ method: 'GET' }).handler(async () => {
   const raw = await getPublishedClient().fetch(SITE_SETTINGS_QUERY)
@@ -24,8 +36,9 @@ export const getSiteSettings = createServerFn({ method: 'GET' }).handler(async (
 export const getPage = createServerFn({ method: 'GET' })
   .validator(parseSlugInput)
   .handler(async ({ data }) => {
+    const client = await clientFor(data.preview)
     if (!data.slug) return null
-    const raw = await getPublishedClient().fetch(PAGE_BY_SLUG_QUERY, { slug: data.slug })
+    const raw = await client.fetch(PAGE_BY_SLUG_QUERY, { slug: data.slug })
     return mapPage(raw)
   })
 
@@ -44,7 +57,8 @@ export const getReports = createServerFn({ method: 'GET' })
 export const getReport = createServerFn({ method: 'GET' })
   .validator(parseSlugInput)
   .handler(async ({ data }) => {
+    const client = await clientFor(data.preview)
     if (!data.slug) return null
-    const raw = await getPublishedClient().fetch(REPORT_BY_SLUG_QUERY, { slug: data.slug })
+    const raw = await client.fetch(REPORT_BY_SLUG_QUERY, { slug: data.slug })
     return mapReport(raw)
   })

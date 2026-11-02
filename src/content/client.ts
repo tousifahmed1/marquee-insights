@@ -13,3 +13,17 @@ export function getPublishedClient(): SanityClient {
   })
   return publishedClient
 }
+
+let previewClient: SanityClient | undefined
+
+export function getPreviewClient(): SanityClient {
+  const token = process.env.SANITY_READ_TOKEN
+  if (!token) throw new Error('Set SANITY_READ_TOKEN to preview drafts')
+  previewClient ??= createClient({
+    ...getSanityConfig(),
+    token,
+    useCdn: false,
+    perspective: 'drafts',
+  })
+  return previewClient
+}

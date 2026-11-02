@@ -12,8 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as PreviewRouteImport } from './routes/preview'
+import { Route as PreviewIndexRouteImport } from './routes/preview.index'
+import { Route as PreviewSlugRouteImport } from './routes/preview.$slug'
 import { Route as ReportsIndexRouteImport } from './routes/reports.index'
 import { Route as ReportsSlugRouteImport } from './routes/reports.$slug'
+import { Route as ApiPreviewEnableRouteImport } from './routes/api.preview.enable'
+import { Route as ApiPreviewExitRouteImport } from './routes/api.preview.exit'
+import { Route as PreviewReportsSlugRouteImport } from './routes/preview.reports.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +36,21 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PreviewRoute = PreviewRouteImport.update({
+  id: '/preview',
+  path: '/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewIndexRoute = PreviewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PreviewRoute,
+} as any)
+const PreviewSlugRoute = PreviewSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PreviewRoute,
+} as any)
 const ReportsIndexRoute = ReportsIndexRouteImport.update({
   id: '/reports/',
   path: '/reports/',
@@ -40,43 +61,111 @@ const ReportsSlugRoute = ReportsSlugRouteImport.update({
   path: '/reports/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPreviewEnableRoute = ApiPreviewEnableRouteImport.update({
+  id: '/api/preview/enable',
+  path: '/api/preview/enable',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPreviewExitRoute = ApiPreviewExitRouteImport.update({
+  id: '/api/preview/exit',
+  path: '/api/preview/exit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewReportsSlugRoute = PreviewReportsSlugRouteImport.update({
+  id: '/reports/$slug',
+  path: '/reports/$slug',
+  getParentRoute: () => PreviewRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
+  '/preview': typeof PreviewRouteWithChildren
+  '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
+  '/preview/': typeof PreviewIndexRoute
   '/reports/': typeof ReportsIndexRoute
+  '/api/preview/enable': typeof ApiPreviewEnableRoute
+  '/api/preview/exit': typeof ApiPreviewExitRoute
+  '/preview/reports/$slug': typeof PreviewReportsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
+  '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
+  '/preview': typeof PreviewIndexRoute
   '/reports': typeof ReportsIndexRoute
+  '/api/preview/enable': typeof ApiPreviewEnableRoute
+  '/api/preview/exit': typeof ApiPreviewExitRoute
+  '/preview/reports/$slug': typeof PreviewReportsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
+  '/preview': typeof PreviewRouteWithChildren
+  '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
+  '/preview/': typeof PreviewIndexRoute
   '/reports/': typeof ReportsIndexRoute
+  '/api/preview/enable': typeof ApiPreviewEnableRoute
+  '/api/preview/exit': typeof ApiPreviewExitRoute
+  '/preview/reports/$slug': typeof PreviewReportsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$slug' | '/explore' | '/reports/$slug' | '/reports/'
+  fullPaths:
+    | '/'
+    | '/$slug'
+    | '/explore'
+    | '/preview'
+    | '/preview/$slug'
+    | '/reports/$slug'
+    | '/preview/'
+    | '/reports/'
+    | '/api/preview/enable'
+    | '/api/preview/exit'
+    | '/preview/reports/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$slug' | '/explore' | '/reports/$slug' | '/reports'
-  id: '__root__' | '/' | '/$slug' | '/explore' | '/reports/$slug' | '/reports/'
+  to:
+    | '/'
+    | '/$slug'
+    | '/explore'
+    | '/preview/$slug'
+    | '/reports/$slug'
+    | '/preview'
+    | '/reports'
+    | '/api/preview/enable'
+    | '/api/preview/exit'
+    | '/preview/reports/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/$slug'
+    | '/explore'
+    | '/preview'
+    | '/preview/$slug'
+    | '/reports/$slug'
+    | '/preview/'
+    | '/reports/'
+    | '/api/preview/enable'
+    | '/api/preview/exit'
+    | '/preview/reports/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SlugRoute: typeof SlugRoute
   ExploreRoute: typeof ExploreRoute
+  PreviewRoute: typeof PreviewRouteWithChildren
   ReportsSlugRoute: typeof ReportsSlugRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
+  ApiPreviewEnableRoute: typeof ApiPreviewEnableRoute
+  ApiPreviewExitRoute: typeof ApiPreviewExitRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -102,6 +191,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/preview': {
+      id: '/preview'
+      path: '/preview'
+      fullPath: '/preview'
+      preLoaderRoute: typeof PreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview/': {
+      id: '/preview/'
+      path: '/'
+      fullPath: '/preview/'
+      preLoaderRoute: typeof PreviewIndexRouteImport
+      parentRoute: typeof PreviewRoute
+    }
+    '/preview/$slug': {
+      id: '/preview/$slug'
+      path: '/$slug'
+      fullPath: '/preview/$slug'
+      preLoaderRoute: typeof PreviewSlugRouteImport
+      parentRoute: typeof PreviewRoute
+    }
     '/reports/': {
       id: '/reports/'
       path: '/reports'
@@ -116,15 +226,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/preview/enable': {
+      id: '/api/preview/enable'
+      path: '/api/preview/enable'
+      fullPath: '/api/preview/enable'
+      preLoaderRoute: typeof ApiPreviewEnableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/preview/exit': {
+      id: '/api/preview/exit'
+      path: '/api/preview/exit'
+      fullPath: '/api/preview/exit'
+      preLoaderRoute: typeof ApiPreviewExitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview/reports/$slug': {
+      id: '/preview/reports/$slug'
+      path: '/reports/$slug'
+      fullPath: '/preview/reports/$slug'
+      preLoaderRoute: typeof PreviewReportsSlugRouteImport
+      parentRoute: typeof PreviewRoute
+    }
   }
 }
+
+interface PreviewRouteChildren {
+  PreviewSlugRoute: typeof PreviewSlugRoute
+  PreviewIndexRoute: typeof PreviewIndexRoute
+  PreviewReportsSlugRoute: typeof PreviewReportsSlugRoute
+}
+
+const PreviewRouteChildren: PreviewRouteChildren = {
+  PreviewSlugRoute: PreviewSlugRoute,
+  PreviewIndexRoute: PreviewIndexRoute,
+  PreviewReportsSlugRoute: PreviewReportsSlugRoute,
+}
+
+const PreviewRouteWithChildren =
+  PreviewRoute._addFileChildren(PreviewRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SlugRoute: SlugRoute,
   ExploreRoute: ExploreRoute,
+  PreviewRoute: PreviewRouteWithChildren,
   ReportsSlugRoute: ReportsSlugRoute,
   ReportsIndexRoute: ReportsIndexRoute,
+  ApiPreviewEnableRoute: ApiPreviewEnableRoute,
+  ApiPreviewExitRoute: ApiPreviewExitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

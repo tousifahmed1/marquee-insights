@@ -5,13 +5,17 @@ import { record } from './mappers/primitives'
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const MAX_PAGE = 1000
 
-export type SlugInput = { slug: string | null }
+export type SlugInput = { slug: string | null; preview: boolean }
 
 export type ReportsInput = { page: number; category: ReportCategory | null }
 
 export function parseSlugInput(input: unknown): SlugInput {
-  const slug = record(input)?.slug
-  return { slug: typeof slug === 'string' && slug.length <= 96 && SLUG.test(slug) ? slug : null }
+  const data = record(input)
+  const slug = data?.slug
+  return {
+    slug: typeof slug === 'string' && slug.length <= 96 && SLUG.test(slug) ? slug : null,
+    preview: data?.preview === true,
+  }
 }
 
 export function parsePage(value: unknown): number {

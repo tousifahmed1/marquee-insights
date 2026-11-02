@@ -51,4 +51,21 @@ describe('applyDefaultCachePolicy', () => {
     applyDefaultCachePolicy(headers, 500)
     expect(headersOf(headers)).toEqual({ 'cache-control': 'no-store' })
   })
+
+  it.each(['/preview', '/preview/about', '/preview/reports/a-report', '/api/preview/enable'])(
+    'never caches %s, whatever the status or route policy',
+    (path) => {
+      for (const status of [200, 307, 404]) {
+        const headers = new Headers(cacheHeaders('content'))
+        applyDefaultCachePolicy(headers, status, path)
+        expect(headersOf(headers)).toEqual({ 'cache-control': 'no-store' })
+      }
+    },
+  )
+
+  it('does not treat lookalike paths as preview', () => {
+    const headers = new Headers(cacheHeaders('content'))
+    applyDefaultCachePolicy(headers, 200, '/previews')
+    expect(headersOf(headers)).toEqual(headersOf(new Headers(cacheHeaders('content'))))
+  })
 })
