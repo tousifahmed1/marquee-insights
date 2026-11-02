@@ -46,7 +46,7 @@ export const Route = createFileRoute('/explore')({
         title: 'Audience explorer',
         path: '/explore',
         description:
-          'Filter 50,000 synthetic survey responses by show, platform, region, age group and wave.',
+          'Filter 50,000 synthetic survey responses from 12 monthly waves by show, platform, region and age group.',
       }),
     ),
   headers: () => cacheHeaders('noStore'),

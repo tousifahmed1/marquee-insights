@@ -53,8 +53,8 @@ function ReportsPage() {
       <Container>
         <h1 className="text-5xl">Reports</h1>
         <p className="mt-6 max-w-prose text-lg text-muted-foreground">
-          Published research on viewing habits, release strategy and audience loyalty, from the
-          weekly panel.
+          Published research on viewing habits, release strategy and audience loyalty, from our
+          monthly panel waves.
         </p>
         <div className="mt-10">
           <CategoryFilter active={category} />

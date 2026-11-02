@@ -31,7 +31,7 @@ export function siteSettings(images: SiteImages) {
     ]),
     defaultSeoTitle: 'Marquee Insights | Audience research',
     defaultSeoDescription:
-      'Weekly audience research for film, television, streaming, gaming and sport, from a panel of 12,400 viewers.',
+      'Audience research for film, television, streaming, gaming and sport, from a panel of 12,400 viewers surveyed in monthly waves.',
     defaultOgImage: image(
       images.ogDefault,
       'Rows of amber marquee lights on a dark navy background',
@@ -47,19 +47,19 @@ export function homePage() {
     slug: { _type: 'slug', current: 'home' },
     sections: [
       section('hero', {
-        eyebrow: 'Weekly viewing panel',
+        eyebrow: 'Monthly viewing panel',
         heading: 'What audiences watch, and why they stay.',
         subheading:
-          'Marquee Insights runs a weekly panel of 12,400 viewers across film, television, streaming, gaming and sport. Studios and platforms use our research to decide what to make, when to release it and who it is for.',
+          'Marquee Insights surveys a panel of 12,400 viewers every month across film, television, streaming, gaming and sport. Studios and platforms use our research to decide what to make, when to release it and who it is for.',
         primaryCta: link('Explore the data', '/explore'),
         secondaryCta: link('Read the reports', '/reports'),
       }),
       section('stats', {
         heading: 'The panel at a glance',
         items: items([
-          { value: '12,400', label: 'viewers surveyed every week' },
+          { value: '12,400', label: 'viewers surveyed every month' },
           { value: '4', label: 'regions, weighted to census age and income' },
-          { value: '52', label: 'survey waves a year, published every Monday' },
+          { value: '12', label: 'survey waves a year, one a month' },
           { value: '7 yrs', label: 'of continuous tracking to compare against' },
         ]),
       }),
@@ -68,14 +68,14 @@ export function homePage() {
         items: items([
           { icon: 'tv', title: 'Reach and completion', text: 'Who starts a title, who finishes it, and where in the run they leave.' },
           { icon: 'users', title: 'Audience profiles', text: 'Age, household, region and viewing habits for every title we track.' },
-          { icon: 'trending-up', title: 'Momentum', text: 'Week-on-week change in awareness, intent to watch and word of mouth.' },
+          { icon: 'trending-up', title: 'Momentum', text: 'Month-on-month change in awareness, intent to watch and word of mouth.' },
           { icon: 'message', title: 'Open responses', text: 'What viewers say in their own words, coded and searchable by theme.' },
           { icon: 'clock', title: 'Release timing', text: 'How launch day, cadence and competing titles shape the first month.' },
           { icon: 'globe', title: 'Regional splits', text: 'The same question answered for each region, so national averages don’t hide anything.' },
         ]),
       }),
       section('quote', {
-        text: 'We used to argue about whether a show was working. Now we open the Monday wave and look at who came back for episode four.',
+        text: 'We used to argue about whether a show was working. Now we open the monthly wave and look at who came back for episode four.',
         author: 'Imani Okafor',
         role: 'Head of Audience Strategy, Lumen+',
       }),
@@ -89,7 +89,7 @@ export function homePage() {
       _type: 'seo',
       title: 'Marquee Insights | Audience research',
       description:
-        'What audiences watch, and why they stay. Weekly research from a panel of 12,400 viewers.',
+        'What audiences watch, and why they stay. Monthly research waves from a panel of 12,400 viewers.',
       noindex: false,
     },
   }
@@ -106,7 +106,7 @@ export function aboutPage(images: SiteImages) {
         eyebrow: 'About Marquee Insights',
         heading: 'Research that starts with the viewer, not the schedule.',
         subheading:
-          'We are a team of 26 researchers, statisticians and former commissioners. Since 2019 we have asked the same panel what they watch every week, so we can tell a passing spike from a real change in habit.',
+          'We are a team of 26 researchers, statisticians and former commissioners. Since 2019 we have asked the same panel what they watch every month, so we can tell a passing spike from a real change in habit.',
         primaryCta: link('Talk to the team', '/contact'),
         image: image(
           images.aboutHero,
@@ -116,7 +116,7 @@ export function aboutPage(images: SiteImages) {
       section('featureGrid', {
         heading: 'How we work',
         items: items([
-          { icon: 'search', title: 'Same people, every week', text: 'A fixed panel lets us follow individual viewers over time instead of guessing from snapshots.' },
+          { icon: 'search', title: 'Same people, every month', text: 'A fixed panel lets us follow individual viewers over time instead of guessing from snapshots.' },
           { icon: 'layers', title: 'Weighted, then checked', text: 'Each wave is weighted to population benchmarks and checked against the previous four before release.' },
           { icon: 'chart', title: 'Methods in the open', text: 'Every report lists its sample, question wording and margin of error. If a number is shaky, we say so.' },
         ]),
@@ -124,7 +124,7 @@ export function aboutPage(images: SiteImages) {
       section('stats', {
         heading: 'Since 2019',
         items: items([
-          { value: '360+', label: 'weekly survey waves completed' },
+          { value: '90+', label: 'monthly survey waves completed' },
           { value: '91%', label: 'of panel members still active after a year' },
         ]),
       }),
@@ -143,7 +143,7 @@ export function aboutPage(images: SiteImages) {
       _type: 'seo',
       title: 'About us | Marquee Insights',
       description:
-        'A team of researchers and statisticians tracking what a fixed panel of 12,400 viewers watch, every week since 2019.',
+        'A team of researchers and statisticians tracking what a fixed panel of 12,400 viewers watch, every month since 2019.',
       noindex: false,
     },
   }
@@ -184,7 +184,7 @@ export function contactPage() {
       }),
       section('ctaBanner', {
         heading: 'Not sure what to ask?',
-        text: 'Start with the explorer. Most questions we get are already answered in last month’s waves.',
+        text: 'Start with the explorer. Most questions we get are already answered in last month’s wave.',
         button: link('Explore the data', '/explore'),
       }),
     ],

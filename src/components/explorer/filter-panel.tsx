@@ -57,7 +57,7 @@ export function FilterPanel({ search, options }: FilterPanelProps) {
         onChange={(ageGroup) => setFilters({ ageGroup })}
       />
       <fieldset className="grid grid-cols-2 gap-3">
-        <legend className="sr-only">Survey wave range</legend>
+        <legend className="sr-only">Monthly survey waves</legend>
         <FilterSelect
           label="From"
           allLabel="First wave"
