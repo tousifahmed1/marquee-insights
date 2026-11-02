@@ -8,13 +8,14 @@
     "dev": "sanity dev --port 3333",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && sanity schema validate && sanity build --yes",
     "lint": "eslint ."
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
+    "@sanity/icons": "^5.2.3",
     "@sanity/vision": "^6.21.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
