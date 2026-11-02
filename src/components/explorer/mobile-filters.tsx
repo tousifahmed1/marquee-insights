@@ -1,15 +1,13 @@
 import { SlidersHorizontalIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { MotionSheet, MotionSheetContent, MotionSheetTrigger } from '@/components/motion/motion-sheet'
 import {
-  Sheet,
   SheetClose,
-  SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet'
 import { activeFilterCount } from '@/data/search'
 import type { ExplorerSearch } from '@/data/search'
@@ -27,15 +25,15 @@ type MobileFiltersProps = {
 export function MobileFilters({ search, options, total }: MobileFiltersProps) {
   const active = activeFilterCount(search)
   return (
-    <Sheet>
-      <SheetTrigger asChild>
+    <MotionSheet>
+      <MotionSheetTrigger asChild>
         <Button variant="outline" className="lg:hidden">
           <SlidersHorizontalIcon aria-hidden />
           Filters
           {active > 0 ? <span className="tabular-nums">({active})</span> : null}
         </Button>
-      </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-sheet">
+      </MotionSheetTrigger>
+      <MotionSheetContent side="bottom">
         <SheetHeader>
           <SheetTitle>Filters</SheetTitle>
           <SheetDescription>Results update as you change each filter.</SheetDescription>
@@ -50,7 +48,7 @@ export function MobileFilters({ search, options, total }: MobileFiltersProps) {
             </Button>
           </SheetClose>
         </SheetFooter>
-      </SheetContent>
-    </Sheet>
+      </MotionSheetContent>
+    </MotionSheet>
   )
 }

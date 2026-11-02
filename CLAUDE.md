@@ -38,9 +38,10 @@ src/
     rich-text/       the shared Portable Text renderer
     reports/         report listing and article components
     explorer/        data explorer table, filters, charts
+    motion/          Reveal and MotionSheet
   content/           ALL CMS access lives here (queries, types, mappers, server functions)
   data/              ALL database access lives here (queries, server functions)
-  lib/               framework-free helpers (cache policy, preview session, image URLs, SEO)
+  lib/               framework-free helpers (cache policy, preview session, image URLs, SEO, motion/)
   styles/            theme tokens and global CSS
   test/              Vitest helpers, such as renderWithRouter()
 studio/              Sanity Studio: schemas in schemaTypes/, desk structure in structure.ts
@@ -100,8 +101,12 @@ tests/               Playwright smoke tests
 - Use theme tokens from `src/styles`. No hard-coded colors, font sizes or spacing values.
 - Tailwind's default palette and scales are removed, so `bg-blue-500` or `text-7xl` will not compile. Add new values as tokens in `src/styles/tokens.css` first, then map them in `src/styles/app.css`.
 - Use shadcn components before writing new primitives. Add them with `pnpm dlx shadcn@latest add <name>`. Do not run `shadcn init`; the project is already configured.
-- Every animation respects `prefers-reduced-motion`.
+- Every animation respects `prefers-reduced-motion`. Motion components get this from `<MotionConfig reducedMotion="user">` in `__root.tsx` (transforms off, fades kept). Anything driven outside React (`Reveal`, GSAP) checks the media query itself.
 - Motion supports the content. No animation that delays reading or interaction.
+- Animate only `transform` and `opacity`, never layout properties, and never hide server-rendered content that is already on screen. Load-time states are applied after hydration and only to things below the fold, so first paint is always the real page.
+- GSAP is for the home page scroll moment only (`src/lib/motion/home-scroll-moment.ts`). The home route imports it dynamically after mount, and not at all for reduced motion, so no other page downloads it. It finds its targets through `data-scroll-moment` attributes on the hero and stats blocks.
+- A GSAP-pinned element must not sit inside a transformed parent. That is why `SectionRenderer` wraps only feature grids, quotes and CTA banners in `Reveal`.
+- Use Motion (`motion/react`) for everything else. Sheets use `MotionSheet` in `src/components/motion`, which drives the Radix dialog through `AnimatePresence` so it animates out as well as in.
 
 ### Testing
 - E2e tests open pages with `gotoHydrated()` from `tests/helpers.ts` before clicking or typing, so they never act before React is interactive.
@@ -119,7 +124,7 @@ tests/               Playwright smoke tests
 1. Add the schema in `studio/schemaTypes/blocks/`, export it from `studio/schemaTypes/index.ts` and add its name to `SECTION_TYPES` in `studio/schemaTypes/documents/page.ts`. Give every field a description and validation.
 2. Add a `_type == "yourBlock" => { ... }` projection to `PAGE_BY_SLUG_QUERY` in `src/content/queries.ts`, then run `pnpm typegen`.
 3. Add the block's type to `SectionBlock` in `src/content/types.ts` and its mapper to `SECTION_MAPPERS` in `src/content/mappers/sections.ts`. Return `null` when required content is missing.
-4. Create the component in `src/components/blocks` and register it in `BLOCK_MAP` in `block-map.ts`. TypeScript fails until both the mapper and the component are registered.
+4. Create the component in `src/components/blocks` and register it in `BLOCK_MAP` in `block-map.ts`. TypeScript fails until both the mapper and the component are registered. If it should fade in on scroll, add it to `REVEALED_BLOCKS` in `section-renderer.tsx` (not if it is pinned or sits at the top of a page).
 5. Add mapper cases for missing and malformed fields to `sections.test.ts`, and a sparse fixture to `section-renderer.test.tsx`.
 6. Optionally add it to a seeded page in `scripts/seed-content/site.ts`.
 7. Run `pnpm verify`.

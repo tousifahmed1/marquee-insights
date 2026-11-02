@@ -1,9 +1,15 @@
+import { Fragment } from 'react'
 import type { ComponentType } from 'react'
 
+import { Reveal } from '@/components/motion/reveal'
 import type { SectionBlock } from '@/content'
 
 import type { BlockProps } from './block-props'
 import { BLOCK_MAP } from './block-map'
+
+// Heroes sit above the fold, and stats are animated by the home page scroll
+// moment, which pins them and so cannot sit inside a transformed wrapper.
+const REVEALED_BLOCKS = new Set<SectionBlock['_type']>(['featureGrid', 'quote', 'ctaBanner'])
 
 type SectionRendererProps = {
   sections: readonly SectionBlock[]
@@ -21,7 +27,12 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
       {sections.map((section, index) => {
         const Block = section ? blockFor(section._type) : null
         if (!section || !Block) return null
-        return <Block key={section._key} block={section} isPageHeading={index === firstHero} />
+        const block = <Block block={section} isPageHeading={index === firstHero} />
+        return REVEALED_BLOCKS.has(section._type) ? (
+          <Reveal key={section._key}>{block}</Reveal>
+        ) : (
+          <Fragment key={section._key}>{block}</Fragment>
+        )
       })}
     </>
   )

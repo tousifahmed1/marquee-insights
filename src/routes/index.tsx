@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
 
 import { ContentPage } from '@/components/content-page'
 import { getPage } from '@/content'
@@ -18,5 +19,25 @@ export const Route = createFileRoute('/')({
 })
 
 function HomePage() {
-  return <ContentPage page={Route.useLoaderData()} />
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const root = ref.current
+    if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let cleanup: (() => void) | undefined
+    let cancelled = false
+    void import('@/lib/motion/home-scroll-moment').then(({ setupHomeScrollMoment }) => {
+      if (!cancelled) cleanup = setupHomeScrollMoment(root)
+    })
+    return () => {
+      cancelled = true
+      cleanup?.()
+    }
+  }, [])
+
+  return (
+    <div ref={ref}>
+      <ContentPage page={Route.useLoaderData()} />
+    </div>
+  )
 }

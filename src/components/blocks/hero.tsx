@@ -13,7 +13,7 @@ export function Hero({ block, isPageHeading }: BlockProps<HeroBlock>) {
   const hasCtas = block.primaryCta || block.secondaryCta
 
   return (
-    <Section>
+    <Section data-scroll-moment="hero">
       <Container
         className={cn(block.image && 'grid items-center gap-12 md:grid-cols-[1.15fr_1fr]')}
       >
@@ -21,7 +21,7 @@ export function Hero({ block, isPageHeading }: BlockProps<HeroBlock>) {
           {block.eyebrow ? (
             <p className="mb-6 text-sm font-medium text-primary">{block.eyebrow}</p>
           ) : null}
-          <Heading className="max-w-4xl text-6xl">{block.heading}</Heading>
+          <Heading data-scroll-moment="headline" className="max-w-4xl text-6xl">{block.heading}</Heading>
           {block.subheading ? (
             <p className="mt-8 max-w-prose text-lg text-muted-foreground">{block.subheading}</p>
           ) : null}
