@@ -148,6 +148,7 @@ export type ReportSummary = {
 }
 
 export type Report = ReportSummary & {
+  updatedAt: string | null
   body: RichTextNode[]
   seo: Seo
 }
@@ -160,3 +161,7 @@ export type ReportList = {
   totalPages: number
   category: ReportCategory | null
 }
+
+export type SitemapEntry = { path: string; updatedAt: string | null }
+
+export type Redirect = { from: string; to: string; status: 301 | 302 }

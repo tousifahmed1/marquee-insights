@@ -44,7 +44,7 @@ test('a signed publish bumps the content version and reports the affected URLs',
   }
 
   const first = await publish()
-  expect(first.urls).toEqual(['/', '/reports', '/reports/e2e-report'])
+  expect(first.urls).toEqual(['/', '/reports', '/reports/e2e-report', '/sitemap.xml'])
   await new Promise((resolve) => setTimeout(resolve, 5))
   const second = await publish()
   expect(Number(second.contentVersion)).toBeGreaterThan(Number(first.contentVersion))

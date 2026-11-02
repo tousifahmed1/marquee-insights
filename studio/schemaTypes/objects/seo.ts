@@ -11,7 +11,8 @@ export const seo = defineType({
       name: 'title',
       title: 'Search title',
       type: 'string',
-      description: 'Shown as the headline in search results. Leave empty to use the page title.',
+      description:
+        'Shown as the headline in search results, followed by "| Marquee Insights", which is added for you. Leave empty to use the page title.',
       validation: (rule) => rule.max(60).warning('Search engines cut titles after about 60 characters'),
     }),
     defineField({

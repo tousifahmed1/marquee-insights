@@ -196,3 +196,22 @@ export function contactPage() {
     },
   }
 }
+
+export function redirects() {
+  return [
+    {
+      _id: 'redirect-research',
+      _type: 'redirect',
+      from: '/research',
+      to: '/reports',
+      permanent: true,
+    },
+    {
+      _id: 'redirect-methodology',
+      _type: 'redirect',
+      from: '/methodology',
+      to: '/about',
+      permanent: false,
+    },
+  ]
+}

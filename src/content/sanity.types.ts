@@ -593,7 +593,7 @@ export type REPORTS_QUERY_RESULT = {
 
 // Source: ../src/content/queries.ts
 // Variable: REPORT_BY_SLUG_QUERY
-// Query: *[_type == "report" && slug.current == $slug][0] {      _id,  title,  "slug": slug.current,  publishedAt,  category,  excerpt,  coverImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } },    body[] {      ...,      _type == "image" => {        _key,        _type,        caption,          alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } }      }    },    seo {   title,  description,  noindex,  ogImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } } }  }
+// Query: *[_type == "report" && slug.current == $slug][0] {      _id,  title,  "slug": slug.current,  publishedAt,  category,  excerpt,  coverImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } },    "updatedAt": _updatedAt,    body[] {      ...,      _type == "image" => {        _key,        _type,        caption,          alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } }      }    },    seo {   title,  description,  noindex,  ogImage {   alt,  hotspot { x, y, width, height },  crop { top, bottom, left, right },  asset->{ _id, metadata { lqip, dimensions { width, height } } } } }  }
 export type REPORT_BY_SLUG_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -626,6 +626,7 @@ export type REPORT_BY_SLUG_QUERY_RESULT = {
       } | null;
     } | null;
   } | null;
+  updatedAt: string;
   body: Array<
     | {
         children?: Array<{
@@ -713,13 +714,38 @@ export type REPORT_BY_SLUG_QUERY_RESULT = {
   } | null;
 } | null;
 
+// Source: ../src/content/queries.ts
+// Variable: SITEMAP_QUERY
+// Query: {    "pages": *[_type == "page" && defined(slug.current) && seo.noindex != true] {      "slug": slug.current,      "updatedAt": _updatedAt    },    "reports": *[_type == "report" && defined(slug.current) && seo.noindex != true]      | order(publishedAt desc) {      "slug": slug.current,      "updatedAt": _updatedAt    }  }
+export type SITEMAP_QUERY_RESULT = {
+  pages: Array<{
+    slug: string | null;
+    updatedAt: string;
+  }>;
+  reports: Array<{
+    slug: string | null;
+    updatedAt: string;
+  }>;
+};
+
+// Source: ../src/content/queries.ts
+// Variable: REDIRECTS_QUERY
+// Query: *[_type == "redirect" && defined(from) && defined(to)] { from, to, permanent }
+export type REDIRECTS_QUERY_RESULT = Array<{
+  from: string;
+  to: string;
+  permanent: boolean | null;
+}>;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
     '\n  *[_type == "siteSettings" && _id == "siteSettings"][0] {\n    siteName,\n    navLinks[] { _key, label, href },\n    footerLinks[] { _key, label, href },\n    defaultSeoTitle,\n    defaultSeoDescription,\n    defaultOgImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n  }\n': SITE_SETTINGS_QUERY_RESULT;
     '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    sections[] {\n      _key,\n      _type,\n      _type == "hero" => {\n        eyebrow,\n        heading,\n        subheading,\n        primaryCta { label, href },\n        secondaryCta { label, href },\n        image { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n      },\n      _type == "featureGrid" => {\n        heading,\n        items[] { _key, icon, title, text }\n      },\n      _type == "stats" => {\n        heading,\n        items[] { _key, value, label }\n      },\n      _type == "quote" => { text, author, role },\n      _type == "ctaBanner" => {\n        heading,\n        text,\n        button { label, href }\n      }\n    },\n    seo { \n  title,\n  description,\n  noindex,\n  ogImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n }\n  }\n': PAGE_BY_SLUG_QUERY_RESULT;
     '\n  {\n    "items": *[\n  _type == "report"\n  && defined(slug.current)\n  && ($category == null || category == $category)\n] | order(publishedAt desc, _id asc) [$start...$end] {\n      \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  category,\n  excerpt,\n  coverImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n\n    },\n    "total": count(*[\n  _type == "report"\n  && defined(slug.current)\n  && ($category == null || category == $category)\n])\n  }\n': REPORTS_QUERY_RESULT;
-    '\n  *[_type == "report" && slug.current == $slug][0] {\n    \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  category,\n  excerpt,\n  coverImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n,\n    body[] {\n      ...,\n      _type == "image" => {\n        _key,\n        _type,\n        caption,\n        \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n\n      }\n    },\n    seo { \n  title,\n  description,\n  noindex,\n  ogImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n }\n  }\n': REPORT_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "report" && slug.current == $slug][0] {\n    \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  category,\n  excerpt,\n  coverImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n,\n    "updatedAt": _updatedAt,\n    body[] {\n      ...,\n      _type == "image" => {\n        _key,\n        _type,\n        caption,\n        \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n\n      }\n    },\n    seo { \n  title,\n  description,\n  noindex,\n  ogImage { \n  alt,\n  hotspot { x, y, width, height },\n  crop { top, bottom, left, right },\n  asset->{ _id, metadata { lqip, dimensions { width, height } } }\n }\n }\n  }\n': REPORT_BY_SLUG_QUERY_RESULT;
+    '\n  {\n    "pages": *[_type == "page" && defined(slug.current) && seo.noindex != true] {\n      "slug": slug.current,\n      "updatedAt": _updatedAt\n    },\n    "reports": *[_type == "report" && defined(slug.current) && seo.noindex != true]\n      | order(publishedAt desc) {\n      "slug": slug.current,\n      "updatedAt": _updatedAt\n    }\n  }\n': SITEMAP_QUERY_RESULT;
+    '\n  *[_type == "redirect" && defined(from) && defined(to)] { from, to, permanent }\n': REDIRECTS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

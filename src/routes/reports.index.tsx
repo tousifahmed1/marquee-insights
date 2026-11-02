@@ -10,6 +10,13 @@ import type { ReportCategory } from '@/content'
 import { cacheHeaders } from '@/lib/cache-control'
 import { resolveSeo, seoHead } from '@/lib/seo'
 
+function reportsPath(category: ReportCategory | null, page: number): string {
+  const search = new URLSearchParams()
+  if (category) search.set('category', category)
+  if (page > 1) search.set('page', String(page))
+  return search.size === 0 ? '/reports' : `/reports?${search}`
+}
+
 type ReportsSearch = { page?: number; category?: ReportCategory }
 
 export const Route = createFileRoute('/reports/')({
@@ -31,6 +38,7 @@ export const Route = createFileRoute('/reports/')({
       resolveSeo(match.context.siteSettings, {
         title: `${category}${page}`,
         description: 'Published research on viewing habits, release strategy and audience loyalty.',
+        path: loaderData ? reportsPath(loaderData.category, loaderData.page) : '/reports',
       }),
     )
   },

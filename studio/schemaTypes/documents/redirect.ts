@@ -49,7 +49,7 @@ export const redirect = defineType({
       title: 'Permanent',
       type: 'boolean',
       description:
-        'On for a page that has moved for good (308). Off for a temporary move (307), so search engines keep the old address.',
+        'On for a page that has moved for good (301). Off for a temporary move (302), so search engines keep the old address.',
       initialValue: true,
       validation: (rule) => rule.required(),
     }),

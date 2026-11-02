@@ -44,6 +44,13 @@ export function mapPage(raw: PAGE_BY_SLUG_QUERY_RESULT | undefined): Page | null
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 
+const ISO_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/
+
+export function isoDateTime(value: unknown): string | null {
+  const date = text(value)
+  return date && ISO_DATE_TIME.test(date) && !Number.isNaN(Date.parse(date)) ? date : null
+}
+
 function isoDate(value: unknown): string | null {
   const date = text(value)
   if (!date || !ISO_DATE.test(date) || Number.isNaN(Date.parse(date))) return null
@@ -70,7 +77,12 @@ export function mapReportSummary(raw: unknown): ReportSummary | null {
 export function mapReport(raw: REPORT_BY_SLUG_QUERY_RESULT | undefined): Report | null {
   const summary = mapReportSummary(raw)
   if (!summary) return null
-  return { ...summary, body: mapRichText(raw?.body), seo: mapSeo(raw?.seo) }
+  return {
+    ...summary,
+    updatedAt: isoDateTime(raw?.updatedAt),
+    body: mapRichText(raw?.body),
+    seo: mapSeo(raw?.seo),
+  }
 }
 
 type ReportListRequest = {

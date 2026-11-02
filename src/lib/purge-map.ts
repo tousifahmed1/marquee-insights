@@ -43,9 +43,14 @@ export function affectedUrls(document: PublishedDocument): string[] {
     case 'siteSettings':
       return [ALL_URLS]
     case 'report':
-      return unique(['/', '/reports', ...document.slugs.map((slug) => `/reports/${slug}`)])
+      return unique([
+        '/',
+        '/reports',
+        ...document.slugs.map((slug) => `/reports/${slug}`),
+        '/sitemap.xml',
+      ])
     case 'page':
-      return unique(document.slugs.map(pagePath))
+      return unique([...document.slugs.map(pagePath), '/sitemap.xml'])
     case 'redirect':
       return document.redirectSources.filter((path) => path.startsWith('/'))
     default:

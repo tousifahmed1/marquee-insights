@@ -44,6 +44,7 @@ export const Route = createFileRoute('/explore')({
     seoHead(
       resolveSeo(match.context.siteSettings, {
         title: 'Audience explorer',
+        path: '/explore',
         description:
           'Filter 50,000 synthetic survey responses by show, platform, region, age group and wave.',
       }),

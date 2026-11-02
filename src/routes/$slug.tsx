@@ -14,7 +14,11 @@ export const Route = createFileRoute('/$slug')({
   },
   head: ({ loaderData, match }) =>
     seoHead(
-      resolveSeo(match.context.siteSettings, { seo: loaderData?.seo, title: loaderData?.title }),
+      resolveSeo(match.context.siteSettings, {
+        seo: loaderData?.seo,
+        title: loaderData?.title,
+        path: loaderData ? `/${loaderData.slug}` : null,
+      }),
     ),
   headers: () => cacheHeaders('content'),
   component: SlugPage,

@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as PreviewRouteImport } from './routes/preview'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiRevalidateRouteImport } from './routes/api.revalidate'
 import { Route as PreviewIndexRouteImport } from './routes/preview.index'
 import { Route as PreviewSlugRouteImport } from './routes/preview.$slug'
@@ -40,6 +42,16 @@ const ExploreRoute = ExploreRouteImport.update({
 const PreviewRoute = PreviewRouteImport.update({
   id: '/preview',
   path: '/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRevalidateRoute = ApiRevalidateRouteImport.update({
@@ -88,6 +100,8 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
   '/preview': typeof PreviewRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/revalidate': typeof ApiRevalidateRoute
   '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
@@ -101,6 +115,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/revalidate': typeof ApiRevalidateRoute
   '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
@@ -116,6 +132,8 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/explore': typeof ExploreRoute
   '/preview': typeof PreviewRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/revalidate': typeof ApiRevalidateRoute
   '/preview/$slug': typeof PreviewSlugRoute
   '/reports/$slug': typeof ReportsSlugRoute
@@ -132,6 +150,8 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/explore'
     | '/preview'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/api/revalidate'
     | '/preview/$slug'
     | '/reports/$slug'
@@ -145,6 +165,8 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/explore'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/api/revalidate'
     | '/preview/$slug'
     | '/reports/$slug'
@@ -159,6 +181,8 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/explore'
     | '/preview'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/api/revalidate'
     | '/preview/$slug'
     | '/reports/$slug'
@@ -174,6 +198,8 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   ExploreRoute: typeof ExploreRoute
   PreviewRoute: typeof PreviewRouteWithChildren
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiRevalidateRoute: typeof ApiRevalidateRoute
   ReportsSlugRoute: typeof ReportsSlugRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
@@ -209,6 +235,20 @@ declare module '@tanstack/react-router' {
       path: '/preview'
       fullPath: '/preview'
       preLoaderRoute: typeof PreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/revalidate': {
@@ -290,6 +330,8 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   ExploreRoute: ExploreRoute,
   PreviewRoute: PreviewRouteWithChildren,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiRevalidateRoute: ApiRevalidateRoute,
   ReportsSlugRoute: ReportsSlugRoute,
   ReportsIndexRoute: ReportsIndexRoute,

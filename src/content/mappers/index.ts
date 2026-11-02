@@ -9,3 +9,4 @@ export {
 } from './documents'
 export { mapRichText } from './rich-text'
 export { mapSections } from './sections'
+export { mapRedirects, mapSitemap } from './routing'

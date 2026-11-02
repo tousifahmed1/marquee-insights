@@ -42,11 +42,12 @@ describe('parsePublishedDocument', () => {
 })
 
 describe('affectedUrls', () => {
-  it('maps a report to its page, the listing and home', () => {
+  it('maps a report to its page, the listing, home and the sitemap', () => {
     expect(urlsFor({ _id: 'r', _type: 'report', slug: 'the-second-season-slump' })).toEqual([
       '/',
       '/reports',
       '/reports/the-second-season-slump',
+      '/sitemap.xml',
     ])
   })
 
@@ -56,18 +57,19 @@ describe('affectedUrls', () => {
       '/reports',
       '/reports/new',
       '/reports/old',
+      '/sitemap.xml',
     ])
   })
 
   it('uses the previous slug of a deleted report', () => {
     expect(
       urlsFor({ _id: 'r', _type: 'report', operation: 'delete', slug: null, previousSlug: 'gone' }),
-    ).toEqual(['/', '/reports', '/reports/gone'])
+    ).toEqual(['/', '/reports', '/reports/gone', '/sitemap.xml'])
   })
 
   it('maps pages to their path, and the home page to /', () => {
-    expect(urlsFor({ _id: 'p', _type: 'page', slug: 'about' })).toEqual(['/about'])
-    expect(urlsFor({ _id: 'p', _type: 'page', slug: 'home' })).toEqual(['/'])
+    expect(urlsFor({ _id: 'p', _type: 'page', slug: 'about' })).toEqual(['/about', '/sitemap.xml'])
+    expect(urlsFor({ _id: 'p', _type: 'page', slug: 'home' })).toEqual(['/', '/sitemap.xml'])
   })
 
   it('maps site settings to every URL', () => {

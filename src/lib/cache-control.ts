@@ -10,6 +10,10 @@ export const CACHE_POLICIES = {
   notFound: {
     'Cache-Control': 'public, s-maxage=300',
   },
+  // Browsers re-check redirects so an editor can change or remove one.
+  redirect: {
+    'Cache-Control': 'public, max-age=0, s-maxage=3600',
+  },
   noStore: {
     'Cache-Control': 'no-store',
   },

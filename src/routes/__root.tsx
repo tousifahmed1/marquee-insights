@@ -13,6 +13,7 @@ import { Nav } from '@/components/nav'
 import { NotFound } from '@/components/not-found'
 import { siteSettingsQueryOptions } from '@/content/query-options'
 import { resolveSeo, seoHead } from '@/lib/seo'
+import { organizationJsonLd } from '@/lib/structured-data'
 import { THEME_INIT_SCRIPT } from '@/lib/theme'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -42,6 +43,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       ...seoHead(resolveSeo(match.context.siteSettings)).meta,
+      organizationJsonLd(match.context.siteSettings),
     ],
     links: [
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

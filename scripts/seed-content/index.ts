@@ -6,7 +6,7 @@ import { figure } from './portable-text'
 import { platformReports } from './reports-platforms'
 import { screenReports } from './reports-screen'
 import type { SeedReport } from './report-types'
-import { aboutPage, contactPage, homePage, siteSettings } from './site'
+import { aboutPage, contactPage, homePage, redirects, siteSettings } from './site'
 
 type SeedDocument = { _id: string; _type: string } & Record<string, unknown>
 
@@ -63,7 +63,7 @@ async function main() {
     ogDefault: await upload('og-default', coverSvg('og-default', 'bulbs', 0)),
   }
   const reports = await Promise.all([...screenReports, ...platformReports].map(reportDocument))
-  const documents: SeedDocument[] = [siteSettings(images), homePage(), aboutPage(images), contactPage(), ...reports]
+  const documents: SeedDocument[] = [siteSettings(images), homePage(), aboutPage(images), contactPage(), ...reports, ...redirects()]
 
   const transaction = client.transaction()
   for (const document of documents) transaction.createOrReplace(document)

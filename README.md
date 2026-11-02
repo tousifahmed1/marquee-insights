@@ -40,4 +40,4 @@ Rendered pages are cached in Workers KV. Publishing in Sanity calls `POST /api/r
 
 The endpoint rejects calls without a valid `sanity-webhook-signature` header. Test it with `pnpm webhook:test <site-url>`, which signs a sample payload with the secret from `.env`.
 
-Each call also logs the document and the URLs it affects (`pnpm wrangler tail`). These come from `affectedUrls()` in `src/lib/purge-map.ts`: a report affects its own page, `/reports` and `/`; a page affects its own path; a redirect affects its source path; site settings affect everything. On a CDN with per-URL purging, those are the URLs to purge instead of bumping a version.
+Each call also logs the document and the URLs it affects (`pnpm wrangler tail`). These come from `affectedUrls()` in `src/lib/purge-map.ts`: a report affects its own page, `/reports`, `/` and `/sitemap.xml`; a page affects its own path and `/sitemap.xml`; a redirect affects its source path; site settings affect everything. On a CDN with per-URL purging, those are the URLs to purge instead of bumping a version.

@@ -106,6 +106,17 @@ describe('mapReport', () => {
     expect(mapped?.seo.noindex).toBe(false)
   })
 
+  it('keeps a valid last-updated time and drops anything else', () => {
+    const at = (updatedAt: unknown) =>
+      mapReport(malformed<REPORT_BY_SLUG_QUERY_RESULT>({ ...report, updatedAt }))?.updatedAt
+    expect(at('2026-11-02T08:39:21Z')).toBe('2026-11-02T08:39:21Z')
+    expect(at('2026-11-02T08:39:21.123Z')).toBe('2026-11-02T08:39:21.123Z')
+    expect(at('2026-11-02')).toBeNull()
+    expect(at('2026-13-40T00:00:00Z')).toBeNull()
+    expect(at(42)).toBeNull()
+    expect(at(undefined)).toBeNull()
+  })
+
   it('returns null for a missing report', () => {
     expect(mapReport(null)).toBeNull()
   })

@@ -90,6 +90,14 @@ tests/               Playwright smoke tests
 - Charts use Recharts 2.15 because Recharts 3 renders nothing on the server. Axes, bars and tooltips must be direct children of the chart (no fragments or wrapper components), every chart gets `id={useId()}` so clip-path ids match after hydration, and every chart has a visually hidden data table.
 - Radix `Select` only fills in its value after hydration. Pass the selected label as `SelectValue` children so the server renders it.
 
+### SEO
+- Every page route sets its head with `seoHead(resolveSeo(settings, { ... }))` from `src/lib/seo.ts`. Pass the page's `path` so it gets a canonical URL and `og:url`; leave it out for previews and pages without a public URL. Document SEO fields win over page fields, which win over the `siteSettings` defaults.
+- Titles always read "Page title | Marquee Insights". `formatTitle()` adds the site name and removes it if an editor already typed it, so never add it by hand.
+- Absolute URLs come from `absoluteUrl()` in `src/lib/site.ts` (`VITE_SITE_URL`, defaulting to the workers.dev URL), never from the request, because cached HTML is shared by every visitor.
+- JSON-LD goes in `meta` as `{ 'script:ld+json': data }` (see `src/lib/structured-data.ts`). TanStack escapes it, so CMS text is safe there. Never render JSON-LD with `dangerouslySetInnerHTML`. The root route adds Organization data and report pages add Article data.
+- `/sitemap.xml` lists the static routes in `STATIC_SITEMAP_PATHS` (`src/lib/sitemap.ts`) plus every page and report without "Hide from search engines". A new code-only page needs adding there. `/robots.txt` points to it.
+- Redirect documents in Sanity are served by `src/server.ts` before any page renders: 301 when permanent, 302 when not. The list is stored in KV under the content version, so publishing a redirect takes effect like any other publish. `mapRedirects()` drops anything that is not a site path to a site path or an `https://` URL.
+
 ### Caching
 - All cache policies live in `src/lib/cache-control.ts`. Routes opt in with `headers: () => cacheHeaders('content')`; never write cache headers by hand.
 - Content pages send `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`, which is right for a real CDN later. `s-maxage` only applies to shared caches, so browsers always revalidate HTML. Never give HTML a browser `max-age`, or a publish will not reach visitors at once.

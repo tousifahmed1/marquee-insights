@@ -90,6 +90,7 @@ export const REPORTS_QUERY = defineQuery(`
 export const REPORT_BY_SLUG_QUERY = defineQuery(`
   *[_type == "report" && slug.current == $slug][0] {
     ${REPORT_SUMMARY},
+    "updatedAt": _updatedAt,
     body[] {
       ...,
       _type == "image" => {
@@ -101,4 +102,22 @@ export const REPORT_BY_SLUG_QUERY = defineQuery(`
     },
     seo { ${SEO} }
   }
+`)
+
+export const SITEMAP_QUERY = defineQuery(`
+  {
+    "pages": *[_type == "page" && defined(slug.current) && seo.noindex != true] {
+      "slug": slug.current,
+      "updatedAt": _updatedAt
+    },
+    "reports": *[_type == "report" && defined(slug.current) && seo.noindex != true]
+      | order(publishedAt desc) {
+      "slug": slug.current,
+      "updatedAt": _updatedAt
+    }
+  }
+`)
+
+export const REDIRECTS_QUERY = defineQuery(`
+  *[_type == "redirect" && defined(from) && defined(to)] { from, to, permanent }
 `)
