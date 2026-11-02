@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 if (existsSync('.env')) process.loadEnvFile('.env')
 
-const PORT = 3100
+const PORT = Number(process.env.E2E_PORT ?? 3917)
 const baseURL = `http://localhost:${PORT}`
 
 export default defineConfig({
@@ -21,7 +21,7 @@ export default defineConfig({
   webServer: {
     command: `pnpm exec vite dev --port ${PORT} --strictPort`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 })

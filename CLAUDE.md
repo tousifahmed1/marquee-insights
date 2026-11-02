@@ -16,7 +16,7 @@ Marketing site and data explorer for a fictional entertainment audience research
 
 - `pnpm dev` starts the dev server on port 3000
 - `pnpm verify` runs typecheck, lint, unit tests and the Playwright smoke test
-- `pnpm e2e` starts its own dev server on port 3100 (strict), separate from `pnpm dev`
+- `pnpm e2e` starts its own dev server on port 3917 (override with `E2E_PORT`), separate from `pnpm dev`. It never reuses a running server, so if the port is busy it fails instead of testing another app
 - `pnpm studio` runs the Sanity Studio on port 3333
 - `pnpm typegen` regenerates GROQ result types into `src/content/sanity.types.ts` (also run by `pnpm typecheck`)
 - `pnpm seed:content` writes the seed pages and reports to Sanity using your Sanity CLI login. Safe to re-run
