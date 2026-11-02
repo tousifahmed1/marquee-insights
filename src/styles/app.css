@@ -35,6 +35,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-overlay: var(--overlay);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -77,6 +78,7 @@
 
   --container-page: var(--width-page);
   --container-prose: var(--width-prose);
+  --container-sheet: var(--width-sheet);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -94,6 +96,10 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-4 outline-ring;
   }
 
   html {

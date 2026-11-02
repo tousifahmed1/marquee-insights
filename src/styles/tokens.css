@@ -72,6 +72,7 @@
   /* Layout widths */
   --width-page: 76rem;
   --width-prose: 40rem;
+  --width-sheet: 24rem;
 
   /* Radius: tight and editorial, hierarchy comes from the shadcn calc scale */
   --radius: 0.375rem;
@@ -97,6 +98,7 @@
   --border: var(--paper-300);
   --input: var(--stone-500);
   --ring: var(--amber-700);
+  --overlay: color-mix(in srgb, var(--navy-950) 35%, transparent);
 
   --chart-1: var(--amber-500);
   --chart-2: var(--sky-600);
@@ -130,6 +132,7 @@
   --border: var(--navy-600);
   --input: var(--navy-400);
   --ring: var(--amber-400);
+  --overlay: color-mix(in srgb, var(--navy-950) 60%, transparent);
 
   --chart-1: var(--amber-400);
   --chart-2: var(--sky-300);

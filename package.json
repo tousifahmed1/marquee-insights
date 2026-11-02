@@ -11,7 +11,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "pnpm run build && wrangler deploy",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsr generate && tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
     "e2e": "playwright test",
