@@ -77,7 +77,7 @@ tests/               Playwright smoke tests
 - Dimension values and labels (platforms, genres, regions, age groups, genders) live in `src/data/dimensions.ts`. The enums, Zod schemas and filter UI all read from there.
 - Explorer inputs are validated by the Zod schemas in `src/data/filters.ts`. Every filter becomes a `WHERE` condition in `src/data/query-builder.ts`, and every sort ends with `id` so pages never overlap.
 - Each server function makes one round trip: send its queries together with `db.batch()`. In development, `timed()` logs each call as `[data] <label> <ms>`.
-- The Neon database is in `us-east-1`, so expect about 300ms per round trip from far away. Measure query cost with `pnpm db:explain`, not with the dev log.
+- The Neon database is in `us-east-1`, so expect about 300ms per round trip from far away in development. In production, Smart Placement (`placement.mode` in `wrangler.jsonc`) runs the Worker near the database when that is faster; the `cf-placement` response header shows where a request ran. Measure query cost with `pnpm db:explain`, not with the dev log.
 - Run `pnpm db:explain` after changing a query or an index. Add an index rather than accept a query over 200ms.
 - Server-only packages used in development (like drizzle and zod) are listed in `environments.ssr.optimizeDeps.include` in `vite.config.ts`. Add new ones there, or Vite reloads mid-request on a cold start and breaks e2e runs.
 

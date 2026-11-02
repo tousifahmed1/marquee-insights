@@ -4,6 +4,11 @@
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  // Runs the Worker near the Neon database (us-east-1) when that is faster
+  // than running it near the visitor. Edge-cached pages are unaffected.
+  "placement": {
+    "mode": "smart"
+  },
   "cache": {
     "enabled": true
   }
