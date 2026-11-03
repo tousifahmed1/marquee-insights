@@ -4,10 +4,11 @@
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
-  // Runs the Worker near the Neon database (us-east-1) when that is faster
-  // than running it near the visitor.
+  // Runs the Worker in the Cloudflare data center nearest the Neon database
+  // (AWS us-east-1). Explorer requests make database round trips; cached pages
+  // are served from KV, so they gain little from running near the visitor.
   "placement": {
-    "mode": "smart"
+    "region": "aws:us-east-1"
   },
   // Rendered content pages are cached in KV (src/lib/page-cache-store.ts) so a
   // publish can invalidate them. The Workers cache runs before the Worker and
