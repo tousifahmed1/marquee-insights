@@ -1,5 +1,7 @@
 import type { ExplorerQuery } from './filters'
-import type { GroupAverage, ResponsePage, ResponseRow } from './types'
+import { AGE_GROUPS, PLATFORMS, values } from './dimensions'
+import type { AgeGroup, Platform } from './dimensions'
+import type { ExplorerCharts, GroupAverage, ResponsePage, ResponseRow } from './types'
 
 export function toResponsePage(
   rows: (Omit<ResponseRow, 'wave'> & { wave: string })[],
@@ -29,6 +31,27 @@ export function fillGroups<K extends string>(
       responses: row?.responses ?? 0,
     }
   })
+}
+
+// Highest average first; groups without responses go last, in their original order.
+export function sortByAverage<K extends string>(groups: readonly GroupAverage<K>[]): GroupAverage<K>[] {
+  return [...groups].sort((a, b) => {
+    if (a.average === null || b.average === null) return Number(a.average === null) - Number(b.average === null)
+    return b.average - a.average
+  })
+}
+
+type GroupRow<K> = { key: K; average: number | null; responses: number }
+
+// Platforms have no natural order, so they are ranked; age groups keep their sequence.
+export function toExplorerCharts(
+  platforms: readonly GroupRow<Platform>[],
+  ageGroups: readonly GroupRow<AgeGroup>[],
+): ExplorerCharts {
+  return {
+    intentByPlatform: sortByAverage(fillGroups(values(PLATFORMS), platforms)),
+    awarenessByAgeGroup: fillGroups(values(AGE_GROUPS), ageGroups),
+  }
 }
 
 export function monthsBetween(first: string | null, last: string | null): string[] {

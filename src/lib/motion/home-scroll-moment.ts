@@ -40,17 +40,15 @@ function statsTimeline(stats: HTMLElement, pinned: boolean) {
   timeline.from(rules, { scaleX: 0, transformOrigin: 'left center', stagger: 0.08, duration: 0.6 }, 0)
 
   const restores: (() => void)[] = []
-  stats.querySelectorAll('[data-scroll-moment="value"]').forEach((element, index) => {
-    const text = element.firstChild
-    if (!(text instanceof Text)) return
-    const original = text.nodeValue ?? ''
+  stats.querySelectorAll<HTMLElement>('[data-scroll-moment="value"]').forEach((element, index) => {
+    const original = element.dataset.value ?? ''
     const count = parseCountUp(original)
     if (!count) return
     restores.push(() => {
-      text.nodeValue = original
+      element.dataset.value = original
     })
     const state = { value: 0 }
-    text.nodeValue = count.format(0)
+    element.dataset.value = count.format(0)
     timeline.to(
       state,
       {
@@ -58,7 +56,7 @@ function statsTimeline(stats: HTMLElement, pinned: boolean) {
         duration: 0.7,
         ease: 'power2.out',
         onUpdate: () => {
-          text.nodeValue = count.format(Math.round(state.value))
+          element.dataset.value = count.format(Math.round(state.value))
         },
       },
       index * 0.08,

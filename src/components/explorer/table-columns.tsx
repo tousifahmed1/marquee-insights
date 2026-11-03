@@ -24,6 +24,7 @@ export const columns = column.columns([
     cell: (info) => (
       <span className="block min-w-40">
         <span className="block font-medium">{info.getValue()}</span>
+        <span className="sr-only">, </span>
         <span className="block text-xs text-muted-foreground">
           {labelFor(GENRES, info.row.original.genre)}
         </span>
@@ -57,7 +58,7 @@ export const columns = column.columns([
     cell: (info) => formatInteger(info.getValue()),
   }),
   column.accessor('intent', {
-    header: 'Intent',
+    header: 'Intent to watch',
     sortDescFirst: true,
     meta: { numeric: true },
     cell: (info) => formatInteger(info.getValue()),

@@ -19,10 +19,14 @@ export function Stats({ block }: BlockProps<StatsBlock>) {
               />
               <dt className="text-muted-foreground">{item.label}</dt>
               <dd className="font-display text-5xl">
-                <span aria-hidden data-scroll-moment="value">
-                  {item.value}
-                </span>
                 <span className="sr-only">{item.value}</span>
+                {/* Drawn from the attribute so the count-up never puts a second copy in the page text. */}
+                <span
+                  aria-hidden
+                  data-scroll-moment="value"
+                  data-value={item.value}
+                  className="before:content-[attr(data-value)]"
+                />
               </dd>
             </div>
           ))}

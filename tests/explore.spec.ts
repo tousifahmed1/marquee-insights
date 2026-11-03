@@ -57,10 +57,10 @@ test('the first view of a filtered explore URL is rendered on the server', async
 test('sorting by a column is kept in the URL', async ({ page }) => {
   await gotoHydrated(page, '/explore?genre=documentary')
   const table = page.getByRole('region', RESULTS)
-  await table.getByRole('button', { name: 'Intent' }).click()
+  await table.getByRole('button', { name: 'Intent to watch' }).click()
 
   await expect(page).toHaveURL(/\/explore\?genre=documentary&sort=intent$/)
-  const header = table.getByRole('columnheader', { name: 'Intent' })
+  const header = table.getByRole('columnheader', { name: 'Intent to watch' })
   await expect(header).toHaveAttribute('aria-sort', 'descending')
   await expect
     .poll(async () => {
@@ -68,4 +68,22 @@ test('sorting by a column is kept in the URL', async ({ page }) => {
       return values.length === 25 && values.every((value, i) => i === 0 || values[i - 1]! >= value)
     })
     .toBe(true)
+})
+
+test('explore says "intent to watch", ranks platforms and separates show names from genres', async ({ page }) => {
+  await page.goto('/explore')
+  const text = await page.locator('body').innerText()
+  expect(text).not.toMatch(/purchase/i)
+  await expect(page.getByRole('heading', { name: 'Intent to watch by platform' })).toBeVisible()
+
+  const averages = (
+    await page.locator('table', { has: page.locator('caption', { hasText: 'Intent to watch by platform' }) })
+      .locator('tbody td:first-of-type')
+      .allTextContents()
+  ).flatMap((cell) => (cell === 'No responses' ? [] : [Number(cell)]))
+  expect(averages.length).toBeGreaterThan(1)
+  expect(averages).toEqual([...averages].sort((a, b) => b - a))
+
+  const show = await page.getByRole('region', RESULTS).locator('tbody td:nth-child(2)').first().textContent()
+  expect(show).toMatch(/^\S.*, \S/)
 })

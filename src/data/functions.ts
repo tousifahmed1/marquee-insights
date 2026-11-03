@@ -1,7 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 
 import { getDb } from './db'
-import { AGE_GROUPS, PLATFORMS, values } from './dimensions'
 import { parseExplorerFilters, parseExplorerQuery } from './filters'
 import {
   awarenessByAgeGroupQuery,
@@ -11,7 +10,7 @@ import {
   showOptionsQuery,
   waveBoundsQuery,
 } from './queries'
-import { fillGroups, monthsBetween, toResponsePage } from './results'
+import { monthsBetween, toExplorerCharts, toResponsePage } from './results'
 import { timed } from './timing'
 import type { ExplorerCharts, ExplorerOptions, ResponsePage } from './types'
 
@@ -32,10 +31,7 @@ export const getExplorerCharts = createServerFn({ method: 'GET' })
     const [platforms, ageGroups] = await timed('explorer charts', () =>
       db.batch([intentByPlatformQuery(db, data), awarenessByAgeGroupQuery(db, data)]),
     )
-    return {
-      intentByPlatform: fillGroups(values(PLATFORMS), platforms),
-      awarenessByAgeGroup: fillGroups(values(AGE_GROUPS), ageGroups),
-    }
+    return toExplorerCharts(platforms, ageGroups)
   })
 
 export const getExplorerOptions = createServerFn({ method: 'GET' }).handler(

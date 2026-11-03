@@ -10,6 +10,19 @@ test('home page renders its CMS sections with a single h1', async ({ page }) => 
   expect(await page.locator('main section').count()).toBeGreaterThan(1)
 })
 
+test('home page stats are in the page text exactly once', async ({ page }) => {
+  await gotoHydrated(page, '/')
+  const stats = page.locator('[data-scroll-moment="stats"]')
+  const values = await stats.locator('dd').allTextContents()
+  expect(values.length).toBeGreaterThan(0)
+  for (const value of values) {
+    expect(value.match(/\d[\d,.]*/g), value).toHaveLength(1)
+  }
+  // The hero copy also mentions the panel size, so count within the stats section.
+  const statsText = await stats.innerText()
+  expect(statsText.split('12,400').length - 1).toBe(1)
+})
+
 test('reports listing filters by category and pages through results in the URL', async ({ page }) => {
   await gotoHydrated(page, '/reports')
   await expect(page.getByRole('heading', { level: 1, name: 'Reports' })).toBeVisible()

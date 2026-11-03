@@ -72,9 +72,9 @@ export function ExplorerCharts({ charts, error, onRetry }: ExplorerChartsProps) 
   return (
     <section aria-label="Charts" className="grid gap-6 xl:grid-cols-2">
       <ChartCard
-        title="Purchase intent by platform"
-        description="Average intent score, 0 to 100"
-        measure="Average intent"
+        title="Intent to watch by platform"
+        description="Average intent-to-watch score, 0 to 100, highest first"
+        measure="Average intent to watch"
         orientation="horizontal"
         color="var(--chart-1)"
         data={charts.intentByPlatform.map((group) => ({

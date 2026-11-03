@@ -15,6 +15,7 @@ export function ReportMeta({ report, className }: ReportMetaProps) {
       {report.category ? (
         <span className="font-medium text-highlight">{categoryLabel(report.category)}</span>
       ) : null}
+      {report.category && report.publishedAt ? <span className="sr-only">, </span> : null}
       {report.publishedAt ? (
         <time dateTime={report.publishedAt}>{formatDate(report.publishedAt)}</time>
       ) : null}
