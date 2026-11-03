@@ -96,7 +96,7 @@ Postgres time per explorer query, measured with `pnpm db:explain` (median of 5 r
 | Sort by show, page 100 | 9.4 ms | 7.5 ms | 12.9 ms |
 | Deepest page (offset 49,900) | 38.6 ms | 12.7 ms | 12.8 ms |
 
-Every combination uses an index. What a visitor waits for is the round trip to `us-east-1`, which is why the Worker is pinned near the database with `placement.region: "aws:us-east-1"`.
+Every combination uses an index. What a visitor waits for is the round trip to `us-east-1`, which `db.batch()` keeps to one per server function. The Worker runs near each visitor so cached pages stay fast; pinning it next to the database was tried and made cached pages much slower from far away for little gain on the explorer.
 
 ### Caching and invalidation
 

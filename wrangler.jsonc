@@ -4,12 +4,10 @@
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
-  // Runs the Worker in the Cloudflare data center nearest the Neon database
-  // (AWS us-east-1). Explorer requests make database round trips; cached pages
-  // are served from KV, so they gain little from running near the visitor.
-  "placement": {
-    "region": "aws:us-east-1"
-  },
+  // No placement setting: the Worker runs near each visitor, so KV cache hits
+  // stay fast. Pinning it to aws:us-east-1 (next to Neon) made cached pages
+  // 10-20x slower for distant visitors and barely helped the explorer, whose
+  // server functions already batch their queries into one round trip.
   // Rendered content pages are cached in KV (src/lib/page-cache-store.ts) so a
   // publish can invalidate them. The Workers cache runs before the Worker and
   // cannot be purged on workers.dev, so it stays off or it would serve pages
