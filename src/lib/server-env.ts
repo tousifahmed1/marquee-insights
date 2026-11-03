@@ -6,8 +6,8 @@ export type ServerSecret =
   | 'SANITY_PREVIEW_SECRET'
   | 'SANITY_WEBHOOK_SECRET'
 
-// Deployed Workers can start with an empty process.env, so secrets are read
-// from the Worker bindings instead. Only import this from server-only code.
+// Every secret read goes through here, from the Worker bindings. An empty value
+// counts as missing. Only import this from server-only code.
 export function serverSecret(name: ServerSecret): string | undefined {
   const value: unknown = env[name]
   return typeof value === 'string' && value !== '' ? value : undefined

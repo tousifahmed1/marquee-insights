@@ -72,7 +72,7 @@ tests/               Playwright smoke tests
 
 ### Environment
 - `SANITY_STUDIO_*` values are public: Vite builds them into the browser bundle (the image URL builder needs them) and the Studio does the same. `.env` must exist when you build or deploy.
-- Secrets (`DATABASE_URL`, `SANITY_READ_TOKEN`, `SANITY_PREVIEW_SECRET`, `SANITY_WEBHOOK_SECRET`) are read at runtime with `serverSecret()` from `src/lib/server-env.ts`, which reads the Worker bindings. Never read them from `process.env`: it works in development but is empty on deployed Workers. Never give them the `SANITY_STUDIO_` prefix. In production they are Worker secrets (`wrangler secret put`); locally they come from `.env`.
+- Secrets (`DATABASE_URL`, `SANITY_READ_TOKEN`, `SANITY_PREVIEW_SECRET`, `SANITY_WEBHOOK_SECRET`) are read at runtime with `serverSecret()` from `src/lib/server-env.ts`, which reads the Worker bindings, so every secret read goes through one place. Never give them the `SANITY_STUDIO_` prefix. In production they are Worker secrets; locally they come from `.env`. Upload them from `.env` with `wrangler secret bulk` (the command is in `README.md`) rather than pasting into the interactive `wrangler secret put` prompt, which can store an empty value. If a secret reads as missing in production, check its value is not empty before changing code.
 - `src/lib/server-env.ts` imports `cloudflare:workers`, so only server-only modules (server function handlers, server routes, `src/data`, `src/content` clients) may import it, never a component.
 - Server functions are protected by TanStack Start's CSRF middleware in `src/start.ts`.
 
