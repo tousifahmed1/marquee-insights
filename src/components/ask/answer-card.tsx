@@ -29,7 +29,7 @@ export function AnswerCard({ answer }: { answer: Answer }) {
         <span>via {PROVIDER_LABEL[answer.provider]}</span>
       </p>
       {answer.chart !== 'none' ? (
-        <AnswerChart kind={answer.chart} columns={answer.columns} rows={answer.rows} />
+        <AnswerChart kind={answer.chart} columns={answer.columns} rows={answer.rows} sql={answer.sql} />
       ) : null}
       <ResultTable columns={answer.columns} rows={answer.rows} rowCount={answer.rowCount} />
       <SqlPanel sql={answer.sql} />

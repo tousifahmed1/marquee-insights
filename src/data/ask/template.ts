@@ -21,11 +21,13 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 // Averages, shares and rates always show one decimal, so 8.0 never reads as 8.
 const DECIMAL_COLUMN = /(^|_)(avg|average|mean|pct|percent|percentage|share|rate|ratio)(_|$)/i
 
-export function formatValue(value: unknown, column = ''): string | null {
+export function formatValue(value: unknown, column = '', decimals = false): string | null {
   if (value === null || value === undefined) return null
   if (typeof value === 'number') {
     if (!Number.isFinite(value)) return null
-    if (DECIMAL_COLUMN.test(column)) return value.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+    if (decimals || DECIMAL_COLUMN.test(column)) {
+      return value.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+    }
     return Number.isInteger(value) ? value.toLocaleString('en-US') : String(value)
   }
   if (typeof value === 'boolean') return value ? 'yes' : 'no'

@@ -14,12 +14,13 @@ import {
 import type { Cell, Row } from '@/data/ask/db'
 import type { ChartKind } from '@/data/ask/reply'
 
-import { columnLabel, formatCell, isNumericColumn } from './format-cell'
+import { columnLabel, formatCell, isNumericColumn, orderedByColumn } from './format-cell'
 
 type AnswerChartProps = {
   kind: Exclude<ChartKind, 'none'>
   columns: string[]
   rows: Row[]
+  sql: string
 }
 
 type Plot = { label: string; value: number }
@@ -27,12 +28,14 @@ type Plot = { label: string; value: number }
 const SSR_SIZE = { width: 480, height: 256 }
 const MAX_BARS = 40
 
-// The category is the first non-numeric column; the value is the first numeric
-// column that is not a count, falling back to the count.
-export function pickChartColumns(columns: string[], rows: Row[]) {
+// The category is the first non-numeric column. The value is the numeric
+// column the SQL orders by, else the first numeric column that is not a count,
+// else the count.
+export function pickChartColumns(columns: string[], rows: Row[], sql = '') {
   const category = columns.find((column) => !isNumericColumn(rows, column))
   const numeric = columns.filter((column) => isNumericColumn(rows, column))
-  const value = numeric.find((column) => !/^(responses|count|n|total)$/i.test(column)) ?? numeric[0]
+  const ordered = orderedByColumn(sql, numeric)
+  const value = ordered ?? numeric.find((column) => !/^(responses|count|n|total)$/i.test(column)) ?? numeric[0]
   return category && value ? { category, value } : null
 }
 
@@ -49,9 +52,9 @@ function ChartTooltip({ active, payload, measure, valueColumn }: { active?: bool
   )
 }
 
-export function AnswerChart({ kind, columns, rows }: AnswerChartProps) {
+export function AnswerChart({ kind, columns, rows, sql }: AnswerChartProps) {
   const id = useId()
-  const picked = pickChartColumns(columns, rows)
+  const picked = pickChartColumns(columns, rows, sql)
   if (!picked || rows.length < 2 || rows.length > MAX_BARS) return null
   const plot: Plot[] = rows
     .filter((row) => typeof row[picked.value] === 'number')
@@ -91,7 +94,7 @@ export function AnswerChart({ kind, columns, rows }: AnswerChartProps) {
               <YAxis
                 type={horizontal ? 'category' : 'number'}
                 dataKey={horizontal ? 'label' : undefined}
-                width={horizontal ? 120 : 40}
+                width={horizontal ? 150 : 40}
                 tickLine={false}
                 axisLine={false}
               />
