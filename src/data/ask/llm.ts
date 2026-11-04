@@ -51,11 +51,13 @@ export class ProviderError extends Error {
 type LlmDeps = {
   providers: ProviderClient[]
   kv: EdgeKv
+  // Called before every provider request, so the daily budget counts attempts.
+  onCall?: (provider: Provider) => Promise<void>
   now?: () => number
   timeoutMs?: number
 }
 
-export function createLlm({ providers, kv, now = Date.now, timeoutMs = TIMEOUT_MS }: LlmDeps): Llm {
+export function createLlm({ providers, kv, onCall, now = Date.now, timeoutMs = TIMEOUT_MS }: LlmDeps): Llm {
   return {
     async generate(prompt) {
       const started = now()
@@ -68,6 +70,7 @@ export function createLlm({ providers, kv, now = Date.now, timeoutMs = TIMEOUT_M
         const controller = new AbortController()
         const timer = setTimeout(() => controller.abort(), timeoutMs)
         try {
+          await onCall?.(provider.name)
           const text = await provider.complete(prompt, controller.signal)
           const ms = now() - started
           console.info(JSON.stringify({ event: 'ask-llm', provider: provider.name, ms }))

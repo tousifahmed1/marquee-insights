@@ -5,13 +5,16 @@ import type { EdgeKv } from '@/lib/edge'
 import { secretsMatch } from '@/lib/preview-session'
 import { serverSecret } from '@/lib/server-env'
 
+import { createBudget } from './budget'
+import type { Budget } from './budget'
 import { createAnswerCache } from './cache'
 import type { AnswerCache } from './cache'
 import { createReadOnlyRunner } from './db'
 import type { RunQuery } from './db'
 import { createLlm, geminiClient, groqClient } from './llm'
 import type { Llm, ProviderClient } from './llm'
-import type { AskDeps } from './pipeline'
+import type { HandleDeps } from './handle'
+import { createTurnstileVerifier } from './turnstile'
 import { validateSql } from './validate'
 
 // Server-only wiring for Ask the data: the KV namespace, the model clients,
@@ -25,6 +28,13 @@ export function getAskKv(): EdgeKv {
   return typeof kv === 'object' && kv !== null ? (kv as EdgeKv) : memoryKv
 }
 
+let budget: Budget | undefined
+
+export function getBudget(): Budget {
+  budget ??= createBudget({ kv: getAskKv(), salt: serverSecret('ASK_ADMIN_SECRET') })
+  return budget
+}
+
 let llm: Llm | undefined
 
 export function getLlm(): Llm {
@@ -34,7 +44,7 @@ export function getLlm(): Llm {
   const groqKey = serverSecret('GROQ_API_KEY')
   if (geminiKey) providers.push(geminiClient(geminiKey))
   if (groqKey) providers.push(groqClient(groqKey))
-  llm = createLlm({ providers, kv: getAskKv() })
+  llm = createLlm({ providers, kv: getAskKv(), onCall: (provider) => getBudget().recordCall(provider) })
   return llm
 }
 
@@ -55,8 +65,15 @@ export function getAnswerCache(): AnswerCache {
   return cache
 }
 
-export function askDeps(): AskDeps {
-  return { llm: getLlm(), validate: validateSql, run: getAskRunner(), cache: getAnswerCache() }
+export function askDeps(): HandleDeps {
+  return {
+    llm: getLlm(),
+    validate: validateSql,
+    run: getAskRunner(),
+    cache: getAnswerCache(),
+    budget: getBudget(),
+    verifyTurnstile: createTurnstileVerifier(serverSecret('TURNSTILE_SECRET_KEY')),
+  }
 }
 
 // Admin routes send the secret in the x-ask-admin header.

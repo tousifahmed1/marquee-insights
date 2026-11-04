@@ -9,6 +9,7 @@ export type ServerSecret =
   | 'GEMINI_API_KEY'
   | 'GROQ_API_KEY'
   | 'ASK_ADMIN_SECRET'
+  | 'TURNSTILE_SECRET_KEY'
 
 // Every secret read goes through here, from the Worker bindings. An empty value
 // counts as missing. Only import this from server-only code.

@@ -44,6 +44,7 @@ pnpm studio              # http://localhost:3333
 | `DATABASE_URL_READONLY` | No | Neon connection string for the `ask_readonly` role, used only by Ask the data |
 | `GEMINI_API_KEY`, `GROQ_API_KEY` | No | Ask the data models (Gemini first, Groq as the fallback) |
 | `ASK_ADMIN_SECRET` | No | Header secret for `pnpm warm:ask` and the Ask the data status endpoint |
+| `VITE_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Site key yes, secret no | Cloudflare Turnstile on the Ask the data form |
 | `VITE_SITE_URL` | Yes | Canonical URLs and the sitemap (defaults to the workers.dev URL) |
 
 `pnpm verify` runs typecheck, lint, unit tests and the Playwright suite. `pnpm deploy` builds and deploys. `pnpm check:prod` checks every route on the live site afterwards.
@@ -51,5 +52,5 @@ pnpm studio              # http://localhost:3333
 Upload the secrets to the Worker from `.env` in one go:
 
 ```bash
-node -e "process.loadEnvFile('.env');const k=['DATABASE_URL','DATABASE_URL_READONLY','SANITY_READ_TOKEN','SANITY_PREVIEW_SECRET','SANITY_WEBHOOK_SECRET','GEMINI_API_KEY','GROQ_API_KEY','ASK_ADMIN_SECRET'];process.stdout.write(JSON.stringify(Object.fromEntries(k.map(x=>[x,process.env[x]]))))" | pnpm wrangler secret bulk
+node -e "process.loadEnvFile('.env');const k=['DATABASE_URL','DATABASE_URL_READONLY','SANITY_READ_TOKEN','SANITY_PREVIEW_SECRET','SANITY_WEBHOOK_SECRET','GEMINI_API_KEY','GROQ_API_KEY','ASK_ADMIN_SECRET','TURNSTILE_SECRET_KEY'];process.stdout.write(JSON.stringify(Object.fromEntries(k.map(x=>[x,process.env[x]]))))" | pnpm wrangler secret bulk
 ```

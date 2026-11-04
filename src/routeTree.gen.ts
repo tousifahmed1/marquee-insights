@@ -20,6 +20,7 @@ import { Route as PreviewIndexRouteImport } from './routes/preview.index'
 import { Route as PreviewSlugRouteImport } from './routes/preview.$slug'
 import { Route as ReportsIndexRouteImport } from './routes/reports.index'
 import { Route as ReportsSlugRouteImport } from './routes/reports.$slug'
+import { Route as ApiAskStatusRouteImport } from './routes/api.ask.status'
 import { Route as ApiAskWarmRouteImport } from './routes/api.ask.warm'
 import { Route as ApiPreviewEnableRouteImport } from './routes/api.preview.enable'
 import { Route as ApiPreviewExitRouteImport } from './routes/api.preview.exit'
@@ -80,6 +81,11 @@ const ReportsSlugRoute = ReportsSlugRouteImport.update({
   path: '/reports/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAskStatusRoute = ApiAskStatusRouteImport.update({
+  id: '/api/ask/status',
+  path: '/api/ask/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAskWarmRoute = ApiAskWarmRouteImport.update({
   id: '/api/ask/warm',
   path: '/api/ask/warm',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/reports/$slug': typeof ReportsSlugRoute
   '/preview/': typeof PreviewIndexRoute
   '/reports/': typeof ReportsIndexRoute
+  '/api/ask/status': typeof ApiAskStatusRoute
   '/api/ask/warm': typeof ApiAskWarmRoute
   '/api/preview/enable': typeof ApiPreviewEnableRoute
   '/api/preview/exit': typeof ApiPreviewExitRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/reports/$slug': typeof ReportsSlugRoute
   '/preview': typeof PreviewIndexRoute
   '/reports': typeof ReportsIndexRoute
+  '/api/ask/status': typeof ApiAskStatusRoute
   '/api/ask/warm': typeof ApiAskWarmRoute
   '/api/preview/enable': typeof ApiPreviewEnableRoute
   '/api/preview/exit': typeof ApiPreviewExitRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/reports/$slug': typeof ReportsSlugRoute
   '/preview/': typeof PreviewIndexRoute
   '/reports/': typeof ReportsIndexRoute
+  '/api/ask/status': typeof ApiAskStatusRoute
   '/api/ask/warm': typeof ApiAskWarmRoute
   '/api/preview/enable': typeof ApiPreviewEnableRoute
   '/api/preview/exit': typeof ApiPreviewExitRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/reports/$slug'
     | '/preview/'
     | '/reports/'
+    | '/api/ask/status'
     | '/api/ask/warm'
     | '/api/preview/enable'
     | '/api/preview/exit'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/reports/$slug'
     | '/preview'
     | '/reports'
+    | '/api/ask/status'
     | '/api/ask/warm'
     | '/api/preview/enable'
     | '/api/preview/exit'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/reports/$slug'
     | '/preview/'
     | '/reports/'
+    | '/api/ask/status'
     | '/api/ask/warm'
     | '/api/preview/enable'
     | '/api/preview/exit'
@@ -215,6 +227,7 @@ export interface RootRouteChildren {
   ApiRevalidateRoute: typeof ApiRevalidateRoute
   ReportsSlugRoute: typeof ReportsSlugRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
+  ApiAskStatusRoute: typeof ApiAskStatusRoute
   ApiAskWarmRoute: typeof ApiAskWarmRoute
   ApiPreviewEnableRoute: typeof ApiPreviewEnableRoute
   ApiPreviewExitRoute: typeof ApiPreviewExitRoute
@@ -299,6 +312,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ask/status': {
+      id: '/api/ask/status'
+      path: '/api/ask/status'
+      fullPath: '/api/ask/status'
+      preLoaderRoute: typeof ApiAskStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ask/warm': {
       id: '/api/ask/warm'
       path: '/api/ask/warm'
@@ -355,6 +375,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRevalidateRoute: ApiRevalidateRoute,
   ReportsSlugRoute: ReportsSlugRoute,
   ReportsIndexRoute: ReportsIndexRoute,
+  ApiAskStatusRoute: ApiAskStatusRoute,
   ApiAskWarmRoute: ApiAskWarmRoute,
   ApiPreviewEnableRoute: ApiPreviewEnableRoute,
   ApiPreviewExitRoute: ApiPreviewExitRoute,

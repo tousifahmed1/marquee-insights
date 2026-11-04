@@ -54,6 +54,26 @@ The data version is the `ask:data-version` key. `pnpm warm:ask --reset` writes t
 
 `pnpm warm:ask [url] [--reset]` posts to `/api/ask/warm` with the `x-ask-admin` header, which runs each example question once and stores the result. Run it after every deploy (and after a reseed with `--reset`) so the example buttons always answer from the cache. Measured locally: the first run made 6 model calls in 11 seconds, the second made 0 in 29 ms.
 
+## Abuse and budget protection
+
+`handleAsk()` in `src/data/ask/handle.ts` runs the guards in order, after the cache (a hit needs none of them):
+
+1. **Daily budget:** 250 model calls per UTC day across both providers, counted in KV (`ask:calls:<day>` and per provider) by a hook that fires before every provider request, so retries and failed attempts count too. Over the limit, new questions get "Ask the data has hit today's free limit. Try one of the examples, or come back tomorrow." The second (retry) call checks the same budget.
+2. **Per IP:** 5 new questions per hour, keyed by a salted SHA-256 of the IP (`cf-connecting-ip`) and the hour; the key expires with the hour, so no IP is stored beyond the window. Cached answers do not count.
+3. **Turnstile:** the form's token is verified at `siteverify` before any model call. Without `TURNSTILE_SECRET_KEY` the check fails closed.
+
+Example questions skip the IP limit and Turnstile, since they are ours, but still count against the budget on a miss. Questions are capped at 300 characters by the server function's schema.
+
+`GET /api/ask/status` with the `x-ask-admin` header returns today's model calls per provider, cache hits and misses, and the remaining budget. Every question logs one `{"event":"ask"}` line with the question, cache hit or miss, provider, generated SQL, row count, model calls and timings; validation failures log `ask-invalid-sql` with the reason, and provider errors and exhaustion marks log their own events.
+
+### Turnstile keys
+
+1. In the Cloudflare dashboard open **Turnstile** and click **Add widget**.
+2. Name it `marquee-insights`, add the hostnames `marquee-insights.tousifahmed.workers.dev` and `localhost`, choose **Managed** (invisible for most visitors, a checkbox when in doubt), and create it.
+3. Copy the **Site key** into `.env` as `VITE_TURNSTILE_SITE_KEY` (public; built into the page) and the **Secret key** as `TURNSTILE_SECRET_KEY` (a Worker secret).
+
+For development and e2e runs, Cloudflare's always-passing test pair `1x00000000000000000000AA` / `1x0000000000000000000000000000000AA` works without a widget.
+
 ## Read-only role
 
 Every query from this feature runs on the `ask_readonly` role, inside a `READ ONLY` transaction, with `SET LOCAL statement_timeout = '3s'`. The role itself also carries the timeout and read-only defaults, so the limits hold even if the code is wrong.

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { EXAMPLE_QUESTIONS } from '@/data/ask/examples'
-import { ask } from '@/data/ask/pipeline'
+import { handleAsk } from '@/data/ask/handle'
 import { askDeps, getAnswerCache, isAdminRequest } from '@/data/ask/server'
 
 // Pre-warms the example questions so the buttons on /ask always answer from
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/api/ask/warm')({
 
         const results = []
         for (const question of EXAMPLE_QUESTIONS) {
-          const outcome = await ask(question, askDeps())
+          const outcome = await handleAsk({ question, ip: null }, askDeps())
           results.push({
             question,
             status: outcome.status,

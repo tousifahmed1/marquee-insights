@@ -46,7 +46,7 @@ export type Refusal = {
 }
 
 export type Failure = {
-  status: 'failed' | 'out-of-capacity'
+  status: 'failed' | 'out-of-capacity' | 'over-budget' | 'rate-limited' | 'unverified'
   question: string
   message: string
   modelCalls: number
@@ -60,6 +60,9 @@ export type AskDeps = {
   validate: Validate
   run: RunQuery
   cache?: AnswerCache
+  // Runs after a cache miss and before the first model call; a Failure stops
+  // the question there (budget, rate limit, Turnstile).
+  beforeModel?: () => Promise<Failure | null>
   // Whether a second model call is allowed right now (the daily budget).
   canRetry?: () => Promise<boolean>
   now?: () => number
@@ -78,6 +81,8 @@ export async function ask(question: string, deps: AskDeps): Promise<AskOutcome> 
   if (hit) {
     return { ...hit, cached: true, modelCalls: 0, timings: { model: 0, query: 0, total: now() - started } }
   }
+  const stopped = await deps.beforeModel?.()
+  if (stopped) return stopped
   const outcome = await generateAnswer(question, deps, started)
   if (cache && (outcome.status === 'answered' || outcome.status === 'refused')) {
     await cache.put(question, outcome)
@@ -113,7 +118,7 @@ async function generateAnswer(question: string, deps: AskDeps, started: number):
 
   let result = await attempt()
   if (result.kind === 'invalid') {
-    console.warn(JSON.stringify({ event: 'ask-invalid-sql', question, error: result.error }))
+    console.warn(JSON.stringify({ event: 'ask-invalid-sql', question, error: result.error, retry: await canRetry() }))
     result = (await canRetry()) ? await attempt(result.error) : result
   }
 
