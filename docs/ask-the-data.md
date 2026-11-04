@@ -6,7 +6,7 @@ A visitor asks a question in plain English, a model turns it into one SQL `SELEC
 
 | Role | Provider | Model | Why |
 |---|---|---|---|
-| Primary | Google Gemini, through `@google/genai` | `gemini-3.8-flash` | The strongest Flash model on the free tier |
+| Primary | Google Gemini, through `@google/genai` | `gemini-3.5-flash-lite` | Free of charge with the roomiest free daily quota (reported 500 requests a day against 20 for 3.8 Flash) |
 | Fallback | Groq, through its OpenAI-compatible API | `openai/gpt-oss-120b` | Free tier with a separate daily quota |
 
 `generate()` in `src/data/ask/llm.ts` is the only place a model is called. It tries Gemini first. A 429 or quota error marks that provider exhausted in KV (`ask:exhausted:<provider>`) and the next provider answers. The mark lasts until the next UTC midnight, or for the retry delay the provider asked for when that is under an hour, so a per-minute limit does not knock a provider out for the day. With every provider exhausted the result is out-of-capacity and nothing is called. Output is capped at 800 tokens and every call is aborted after 15 seconds.
