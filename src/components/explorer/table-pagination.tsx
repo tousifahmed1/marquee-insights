@@ -3,7 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { PAGE_SIZES } from '@/data/filters'
-import { cleanSearch } from '@/data/search'
+import { withPage } from '@/data/search'
 import type { ResponsePage } from '@/data/types'
 import { formatInteger } from '@/lib/format'
 
@@ -29,7 +29,7 @@ function PageLink({ page, label, disabled, children }: {
     <Button asChild variant="outline" size="sm">
       <Link
         to="/explore"
-        search={(prev) => cleanSearch({ ...prev, page })}
+        search={(prev) => withPage(prev, page)}
         resetScroll={false}
         aria-label={label}
       >

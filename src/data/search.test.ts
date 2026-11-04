@@ -1,7 +1,17 @@
 import { describe, expect, it } from 'vitest'
 
 import { EXPLORER_DEFAULTS } from './filters'
-import { activeFilterCount, applyFilters, cleanSearch, toExplorerQuery, toFilters } from './search'
+import {
+  activeFilterCount,
+  cleanSearch,
+  toExplorerQuery,
+  toFilters,
+  withFilters,
+  withPage,
+  withPageSize,
+  withSort,
+  withoutFilters,
+} from './search'
 
 describe('cleanSearch', () => {
   it('keeps valid values', () => {
@@ -58,22 +68,56 @@ describe('cleanSearch', () => {
   })
 })
 
-describe('applyFilters', () => {
+describe('withFilters', () => {
   it('sets a filter and goes back to the first page', () => {
-    expect(applyFilters({ page: 5, sort: 'intent' }, { platform: 'tidewell' })).toEqual({
+    expect(withFilters({ page: 5, sort: 'intent' }, { platform: 'tidewell' })).toEqual({
       platform: 'tidewell',
       sort: 'intent',
     })
   })
 
   it('removes a filter set to undefined', () => {
-    expect(applyFilters({ platform: 'tidewell', region: 'west' }, { platform: undefined })).toEqual({
+    expect(withFilters({ platform: 'tidewell', region: 'west' }, { platform: undefined })).toEqual({
       region: 'west',
     })
   })
 
   it('ignores an invalid filter value', () => {
-    expect(applyFilters({ region: 'west' }, { genre: 'western' })).toEqual({ region: 'west' })
+    expect(withFilters({ region: 'west' }, { genre: 'western' })).toEqual({ region: 'west' })
+  })
+})
+
+describe('URL changes', () => {
+  const view = { platform: 'tidewell', region: 'west', sort: 'intent', dir: 'asc', pageSize: 50, page: 4 } as const
+
+  it('clears every filter but keeps the sort, direction and page size', () => {
+    expect(withoutFilters(view)).toEqual({ sort: 'intent', dir: 'asc', pageSize: 50 })
+  })
+
+  it('goes back to the first page when the sort or page size changes', () => {
+    expect(withSort(view, 'satisfaction', 'desc')).toEqual({
+      platform: 'tidewell',
+      region: 'west',
+      sort: 'satisfaction',
+      pageSize: 50,
+    })
+    expect(withPageSize(view, 100)).toEqual({
+      platform: 'tidewell',
+      region: 'west',
+      sort: 'intent',
+      dir: 'asc',
+      pageSize: 100,
+    })
+  })
+
+  it('leaves default values out of the URL', () => {
+    expect(withSort({ sort: 'intent' }, 'wave', 'desc')).toEqual({})
+    expect(withPageSize({ pageSize: 50 }, 25)).toEqual({})
+    expect(withPage({ page: 3 }, 1)).toEqual({})
+  })
+
+  it('moves to a page and keeps everything else', () => {
+    expect(withPage({ platform: 'tidewell' }, 2)).toEqual({ platform: 'tidewell', page: 2 })
   })
 })
 

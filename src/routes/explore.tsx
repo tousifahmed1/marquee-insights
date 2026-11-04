@@ -1,5 +1,4 @@
-import { keepPreviousData, useQuery, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
 import { Container } from '@/components/container'
 import { ExplorerCharts } from '@/components/explorer/explorer-charts'
@@ -9,14 +8,11 @@ import { FilterPanel } from '@/components/explorer/filter-panel'
 import { MobileFilters } from '@/components/explorer/mobile-filters'
 import { ResultsStatus } from '@/components/explorer/results-status'
 import { ResultsTable } from '@/components/explorer/results-table'
+import { useExplorerData } from '@/components/explorer/use-explorer-data'
 import { Section } from '@/components/section'
-import { cleanSearch, toExplorerQuery, toFilters } from '@/data/search'
+import { loadExplorer } from '@/data/explorer-queries'
+import { cleanSearch } from '@/data/search'
 import type { ExplorerSearch } from '@/data/search'
-import {
-  explorerChartsQueryOptions,
-  explorerOptionsQueryOptions,
-  explorerRowsQueryOptions,
-} from '@/data/query-options'
 import { cacheHeaders } from '@/lib/cache-control'
 import { resolveSeo, seoHead } from '@/lib/seo'
 import { cn } from '@/lib/utils'
@@ -24,23 +20,7 @@ import { cn } from '@/lib/utils'
 export const Route = createFileRoute('/explore')({
   validateSearch: (search: Record<string, unknown>): ExplorerSearch => cleanSearch(search),
   loaderDeps: ({ search }) => search,
-  loader: async ({ context, deps, cause }) => {
-    const { queryClient } = context
-    const query = toExplorerQuery(deps)
-    const rowsOptions = explorerRowsQueryOptions(query)
-    const chartsOptions = explorerChartsQueryOptions(toFilters(query))
-    if (cause === 'stay') {
-      void queryClient.prefetchQuery(rowsOptions)
-      void queryClient.prefetchQuery(chartsOptions)
-      return
-    }
-    const [, rows] = await Promise.all([
-      queryClient.ensureQueryData(explorerOptionsQueryOptions),
-      queryClient.ensureQueryData(rowsOptions),
-      queryClient.ensureQueryData(chartsOptions),
-    ])
-    if (query.page > rows.totalPages) throw notFound()
-  },
+  loader: ({ context, deps, cause }) => loadExplorer(context.queryClient, deps, cause),
   head: ({ match }) =>
     match.status === 'notFound'
       ? {}
@@ -65,15 +45,7 @@ export const Route = createFileRoute('/explore')({
 
 function ExplorerPage() {
   const search = Route.useSearch()
-  const query = toExplorerQuery(search)
-  const filters = toFilters(query)
-  const { data: options } = useSuspenseQuery(explorerOptionsQueryOptions)
-  const rows = useQuery({ ...explorerRowsQueryOptions(query), placeholderData: keepPreviousData })
-  const charts = useQuery({
-    ...explorerChartsQueryOptions(filters),
-    placeholderData: keepPreviousData,
-  })
-  const updating = rows.isPlaceholderData || charts.isPlaceholderData
+  const { query, options, rows, charts, updating } = useExplorerData(search)
 
   return (
     <Section className="pt-12">

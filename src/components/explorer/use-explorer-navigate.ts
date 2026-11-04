@@ -1,10 +1,8 @@
 import { useNavigate } from '@tanstack/react-router'
 
-import type { SortDirection, SortField, PageSize } from '@/data/filters'
-import { applyFilters, cleanSearch } from '@/data/search'
-import type { ExplorerSearch, FILTER_KEYS } from '@/data/search'
-
-export type FilterPatch = Partial<Record<(typeof FILTER_KEYS)[number], unknown>>
+import type { PageSize, SortDirection, SortField } from '@/data/filters'
+import { withFilters, withPageSize, withSort, withoutFilters } from '@/data/search'
+import type { ExplorerSearch, FilterPatch } from '@/data/search'
 
 export function useExplorerNavigate() {
   const navigate = useNavigate({ from: '/explore' })
@@ -12,12 +10,9 @@ export function useExplorerNavigate() {
     void navigate({ search: next, resetScroll: false })
 
   return {
-    setFilters: (patch: FilterPatch) => go((prev) => applyFilters(prev, patch)),
-    clearFilters: () =>
-      go((prev) => cleanSearch({ sort: prev.sort, dir: prev.dir, pageSize: prev.pageSize })),
-    setSort: (sort: SortField, dir: SortDirection) =>
-      go((prev) => cleanSearch({ ...prev, sort, dir, page: undefined })),
-    setPageSize: (pageSize: PageSize) =>
-      go((prev) => cleanSearch({ ...prev, pageSize, page: undefined })),
+    setFilters: (patch: FilterPatch) => go((prev) => withFilters(prev, patch)),
+    clearFilters: () => go(withoutFilters),
+    setSort: (sort: SortField, dir: SortDirection) => go((prev) => withSort(prev, sort, dir)),
+    setPageSize: (pageSize: PageSize) => go((prev) => withPageSize(prev, pageSize)),
   }
 }

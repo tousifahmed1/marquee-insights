@@ -58,6 +58,10 @@ export type SortField = (typeof SORT_FIELDS)[number]
 export type SortDirection = (typeof SORT_DIRECTIONS)[number]
 export type PageSize = (typeof PAGE_SIZES)[number]
 
+export function isSortField(value: string): value is SortField {
+  return (SORT_FIELDS as readonly string[]).includes(value)
+}
+
 export function parseExplorerFilters(input: unknown): ExplorerFilters {
   return explorerFiltersSchema.parse(input ?? {})
 }

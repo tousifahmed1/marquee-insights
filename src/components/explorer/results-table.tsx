@@ -3,8 +3,8 @@ import type { SortingState, Updater } from '@tanstack/react-table'
 import { ArrowDownIcon, ArrowUpIcon, ChevronsUpDownIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { SORT_FIELDS } from '@/data/filters'
-import type { ExplorerQuery, SortField } from '@/data/filters'
+import { isSortField } from '@/data/filters'
+import type { ExplorerQuery } from '@/data/filters'
 import type { ResponsePage } from '@/data/types'
 import { cn } from '@/lib/utils'
 
@@ -22,10 +22,6 @@ type ResultsTableProps = {
 }
 
 const EMPTY: ResponsePage['rows'] = []
-
-function isSortField(value: string): value is SortField {
-  return (SORT_FIELDS as readonly string[]).includes(value)
-}
 
 export function ResultsTable({ page, query, error, onRetry }: ResultsTableProps) {
   const { setSort, clearFilters } = useExplorerNavigate()
