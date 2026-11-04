@@ -18,6 +18,7 @@
     "db:explain": "tsx scripts/explain-explorer.ts",
     "check:prod": "tsx scripts/check-production.ts",
     "webhook:test": "tsx scripts/send-test-webhook.ts",
+    "ask:tokens": "tsx scripts/ask-prompt-tokens.ts",
     "db:studio": "drizzle-kit studio",
     "generate-routes": "tsr generate",
     "build": "vite build",

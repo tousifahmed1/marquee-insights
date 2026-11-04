@@ -2,7 +2,7 @@ import type { NewResponse } from '../../src/data/schema'
 import type { AgeGroup, Gender, Genre, Platform, Region } from '../../src/data/dimensions'
 import { AGE_GROUPS, GENDERS, REGIONS, values } from '../../src/data/dimensions'
 
-import type { CatalogueShow } from './catalogue'
+import type { CatalogueShow } from '../../src/data/catalogue'
 import type { Random } from './random'
 import { clamp } from './random'
 

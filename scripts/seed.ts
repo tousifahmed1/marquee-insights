@@ -9,7 +9,7 @@ import * as schema from '../src/data/schema'
 import type { NewResponse } from '../src/data/schema'
 import { responses, shows } from '../src/data/schema'
 
-import { CATALOGUE } from './survey-data/catalogue'
+import { CATALOGUE } from '../src/data/catalogue'
 import { generateResponses, lastWaves, profileShows } from './survey-data/generate'
 import { createRandom } from './survey-data/random'
 

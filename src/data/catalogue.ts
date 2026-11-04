@@ -1,4 +1,4 @@
-import type { Genre, Platform } from '../../src/data/dimensions'
+import type { Genre, Platform } from './dimensions'
 
 export type CatalogueShow = {
   title: string
