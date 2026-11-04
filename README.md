@@ -18,9 +18,23 @@ All shows, platforms, brands and survey responses are synthetic.
 
 - [Architecture](docs/architecture.md): request flow, rendering, data
 - [Caching and publish](docs/caching.md): KV page cache, webhook setup, affected URLs
+- [Ask the data](docs/ask-the-data.md): text to SQL, validation, caching, budgets, evaluation
 - [Running on GCP](docs/gcp.md): Cloud Run, Cloud CDN and Cloud SQL design
 - [Working with Claude Code](docs/claude-code.md)
 - `CLAUDE.md`: commands, folder layout and the rules every change follows
+
+## Ask the data
+
+`/ask` turns a plain-English question into one SQL `SELECT`, runs it read-only, and shows the answer with the query beside it. The full design is in [docs/ask-the-data.md](docs/ask-the-data.md); the short version:
+
+- **Text to SQL, not RAG.** The questions are numeric ("which platform has the highest intent among 18 to 34 year olds"), so the right answer is a computation over all 50,000 rows, not a passage retrieved from a document. The model writes the query and Postgres does the arithmetic.
+- **One model call per question.** The model returns one JSON object: `answerable`, `sql`, an `answer_template` with `{column}` placeholders, a chart hint and a reason. The template is filled from the first result row, so every number in an answer comes from the database and the model is never called a second time to write the sentence.
+- **Caching and pre-warming.** Answers (and refusals) are cached in Workers KV under the normalised question's hash and a data version, with no expiry. A hit costs zero model calls. `pnpm warm:ask` runs the six example questions after a deploy so the example buttons are always cache hits; `pnpm warm:ask --reset` after a reseed.
+- **Turnstile and budgets.** Cloudflare Turnstile is verified before any model call; cached answers and examples skip it. Each IP gets 5 new questions an hour, and the whole site 250 model calls a UTC day, counted in KV. `GET /api/ask/status` (admin header) shows the day's calls per provider, cache hits and the remaining budget.
+- **Provider fallback.** Gemini 3.5 Flash-Lite answers first through the official SDK; on a 429 or quota error it is marked exhausted in KV (until the next UTC midnight, or for the short retry delay of a per-minute limit) and Groq's `openai/gpt-oss-120b` takes over. Both exhausted means an "out of capacity" message, with no call made.
+- **Validation layers.** The SQL is parsed with node-sql-parser in Postgres mode and walked deny-by-default: one `SELECT`, only the two tables and their real columns, an allowlist of functions and operators, no comments, catalogs, set operations, `WITH` or window functions, `LIMIT 100` added unless the result is one aggregate row. What runs is the checked tree printed back. One retry with the rejection reason, budget permitting.
+- **Read-only role.** Queries run as `ask_readonly`, which can only `SELECT` from `shows` and `responses`, inside a `READ ONLY` transaction with a 3 second statement timeout.
+- **Evaluation.** `pnpm eval:ask` runs 20 questions with reference SQL plus 4 refusals through the real pipeline. Gemini 3.5 Flash-Lite: 20/20 answerable, 4/4 refused, 2.8 s a question. Groq gpt-oss-120b: 20/20, 4/4, 2.1 s.
 
 ## Running it locally
 
@@ -47,7 +61,7 @@ pnpm studio              # http://localhost:3333
 | `VITE_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Site key yes, secret no | Cloudflare Turnstile on the Ask the data form |
 | `VITE_SITE_URL` | Yes | Canonical URLs and the sitemap (defaults to the workers.dev URL) |
 
-`pnpm verify` runs typecheck, lint, unit tests and the Playwright suite. `pnpm deploy` builds and deploys. `pnpm check:prod` checks every route on the live site afterwards.
+`pnpm verify` runs typecheck, lint, unit tests and the Playwright suite. `pnpm deploy` builds and deploys. `pnpm check:prod` checks every route on the live site afterwards, and `pnpm warm:ask` fills the Ask the data cache.
 
 Upload the secrets to the Worker from `.env` in one go:
 

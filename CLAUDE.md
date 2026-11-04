@@ -26,6 +26,9 @@ Marketing site and data explorer for a fictional entertainment audience research
 - `pnpm deploy` builds and deploys to Cloudflare. It always rebuilds, so never run `wrangler deploy` on its own: a stale `dist/` ships old code
 - `pnpm check:prod` checks every route on the live site after a deploy (pass a URL to check another server)
 - `pnpm webhook:test <url>` sends a signed publish webhook to `<url>/api/revalidate`, using `SANITY_WEBHOOK_SECRET` from `.env`
+- `pnpm warm:ask [url] [--reset]` runs the Ask the data example questions once so they are cached; run it after every deploy, and with `--reset` after `pnpm seed`
+- `pnpm eval:ask [--provider gemini|groq] [--only-failed]` scores the Ask the data pipeline against `tests/ask/cases.ts`. Each case spends a model call from the same free quota as visitors
+- `pnpm ask:tokens` counts the Ask the data prompt; keep it under about 2,000 tokens
 
 **Always run `pnpm verify` before saying a task is done. If it fails, fix it. Never skip or weaken a check to make it pass.**
 
@@ -40,9 +43,11 @@ src/
     rich-text/       the shared Portable Text renderer
     reports/         report listing and article components
     explorer/        data explorer table, filters, charts
+    ask/             the /ask form, answer card, chart, table and SQL panel
     motion/          Reveal and MotionSheet
   content/           ALL CMS access lives here (queries, types, mappers, server functions)
   data/              ALL database access lives here (queries, server functions)
+    ask/             Ask the data: prompt, validator, pipeline, cache, budget, provider layer
   lib/               framework-free helpers (cache policy, preview session, image URLs, SEO, motion/)
   styles/            theme tokens and global CSS
   test/              Vitest helpers, such as renderWithRouter()
@@ -94,6 +99,16 @@ tests/               Playwright smoke tests
 - Charts use Recharts 2.15 because Recharts 3 renders nothing on the server. Axes, bars and tooltips must be direct children of the chart (no fragments or wrapper components), every chart gets `id={useId()}` so clip-path ids match after hydration, and every chart has a visually hidden data table.
 - The results table puts the three scores straight after Show, so the column you sort by is always in view; the descriptive columns (platform, viewer, recommends) scroll. Only the sorted score column draws its 0–100 meter bars, to keep the table narrow. Region, age and gender share one "Viewer" cell.
 - Radix `Select` only fills in its value after hydration. Pass the selected label as `SelectValue` children so the server renders it.
+
+### Ask the data
+- Every model call goes through `generate()` in `src/data/ask/llm.ts`; never call a provider SDK anywhere else. Gemini first, Groq on a 429 or quota error, out-of-capacity when both are marked exhausted in KV.
+- The model's SQL always passes `validateSql()` (`src/data/ask/validate.ts`) and the SQL that runs is the one it prints back. New functions or expression kinds go on its allowlists with a test in `validate.test.ts`; never widen it to a denylist.
+- Queries run only through `createReadOnlyRunner()` on `DATABASE_URL_READONLY`, inside a READ ONLY transaction with a 3 second statement timeout. The role can only SELECT from `shows` and `responses` (SQL in `docs/ask-the-data.md`).
+- The schema context and examples live in `src/data/ask/schema-context.ts` and read their values from `dimensions.ts` and `catalogue.ts`. After editing them run `pnpm ask:tokens` and `pnpm eval:ask`; the primary must stay at 18/20 or better.
+- The answer sentence is a template filled from the first row (`template.ts`); the model never writes a number. A placeholder that cannot be filled means the neutral sentence, never a second model call.
+- `handleAsk()` runs the guards in order: cache, daily budget, per-IP limit, Turnstile. Example questions (`examples.ts`) skip the IP limit and Turnstile, and `pnpm warm:ask` keeps them cached. Cached answers never count against anything.
+- `/ask`, `/api/ask/*` and the server function send `no-store`. Admin routes check the `x-ask-admin` header with `isAdminRequest()`.
+- Averages and shares show one decimal everywhere (`formatValue(value, column)`), so 8.0 never reads as 8.
 
 ### SEO
 - CMS document routes use the heads in `src/lib/document-heads.ts`; previews get no canonical URL and no structured data. Other page routes set their head with `seoHead(resolveSeo(settings, { ... }))` from `src/lib/seo.ts`. Pass the page's `path` so it gets a canonical URL and `og:url`; leave it out for previews and pages without a public URL. Document SEO fields win over page fields, which win over the `siteSettings` defaults.

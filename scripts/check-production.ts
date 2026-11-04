@@ -56,6 +56,7 @@ async function main() {
       status: 200,
       expect: has(/Showing 1–25 of/, 'no server-rendered explorer rows'),
     },
+    { path: '/ask', status: 200, expect: has(/Try an example/, 'no example questions') },
     { path: '/reports/no-such-report', status: 404 },
     { path: '/no-such-page', status: 404 },
   ]
