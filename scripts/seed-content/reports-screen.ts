@@ -112,6 +112,9 @@ export const screenReports: SeedReport[] = [
     title: 'Field notes: festival audiences',
     publishedAt: '2026-09-08',
     category: 'film',
+    cover: { style: 'arcs', accent: 2, alt: 'Concentric dashed arcs in navy with one ring picked out in rose' },
+    excerpt:
+      'We talked to 140 people between screenings at three regional film festivals. Early signs: festival audiences choose films by director far more often than by cast.',
     body: () => [
       p('A short note from our team at three regional film festivals this summer. We interviewed 140 attendees between screenings. A full report will follow once the panel data for the autumn release window is in.'),
       p('Early signs: festival attendees were far more likely than the wider panel to say they choose films by director rather than by cast.'),
