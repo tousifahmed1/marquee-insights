@@ -185,8 +185,8 @@ The app code stays. Three Cloudflare-specific pieces change:
 1. **Build for Node.** In `vite.config.ts`, replace `cloudflare()` with Nitro's `nitro()` plugin from `nitro/vite`. `pnpm build` then writes `.output/server/index.mjs`, and `wrangler.jsonc` is no longer used.
 2. **Secrets.** `serverSecret()` in `src/lib/server-env.ts` reads `process.env`, where Cloud Run puts Secret Manager values.
 3. **Caching.**
-   - `getPageCache()` returns `null`, so `src/server.ts` renders every request and Cloud CDN does the caching.
-   - Redirects use the in-memory list that development already uses.
+   - `getEdgeStore()` returns the in-memory store with `cachePages: false`, as in development, so every request renders and Cloud CDN does the caching.
+   - Redirects use that in-memory store too, kept for 30 seconds.
    - `/api/revalidate` purges Cloud CDN instead of bumping a KV version (below).
 
 ### Dockerfile

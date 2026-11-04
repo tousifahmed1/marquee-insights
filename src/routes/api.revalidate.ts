@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { bumpContentVersion } from '@/lib/page-cache'
-import { getPageCacheKv } from '@/lib/page-cache-store'
+import { bumpContentVersion } from '@/lib/edge'
+import { getContentKv } from '@/lib/edge/workers-store'
 import { affectedUrls, parsePublishedDocument } from '@/lib/purge-map'
 import { isValidSanitySignature } from '@/lib/sanity-webhook'
 import { serverSecret } from '@/lib/server-env'
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/api/revalidate')({
       GET: () => json({ message: 'Sanity calls this endpoint with POST.' }, 405),
       POST: async ({ request }) => {
         const secret = serverSecret('SANITY_WEBHOOK_SECRET')
-        const kv = getPageCacheKv()
+        const kv = getContentKv()
         if (!secret || !kv) {
           return json({ message: 'Revalidation is not configured on this server.' }, 500)
         }

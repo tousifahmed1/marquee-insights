@@ -2,7 +2,7 @@ import { isPreviewUrlPath } from '@/lib/preview-session'
 
 // s-maxage is for shared caches only, so browsers keep revalidating HTML while a
 // CDN may hold it for an hour. On workers.dev the Workers cache is off and
-// rendered pages are cached in KV instead (see page-cache-store.ts).
+// rendered pages are cached in KV instead (see src/lib/edge).
 export const CACHE_POLICIES = {
   content: {
     'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
