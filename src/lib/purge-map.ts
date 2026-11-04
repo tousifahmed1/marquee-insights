@@ -1,4 +1,5 @@
 import { record } from '@/content/mappers/primitives'
+import { pageUrl, reportUrl } from '@/content/urls'
 
 export const ALL_URLS = '/*'
 
@@ -33,8 +34,6 @@ export function parsePublishedDocument(payload: unknown): PublishedDocument | nu
   }
 }
 
-const pagePath = (slug: string) => (slug === 'home' ? '/' : `/${slug}`)
-
 // The URLs a change can affect. A CDN with per-URL purging would invalidate
 // exactly these; the KV cache invalidates everything with one version bump.
 // Paths cover every query string, so /reports includes its filtered pages.
@@ -46,11 +45,11 @@ export function affectedUrls(document: PublishedDocument): string[] {
       return unique([
         '/',
         '/reports',
-        ...document.slugs.map((slug) => `/reports/${slug}`),
+        ...document.slugs.map(reportUrl),
         '/sitemap.xml',
       ])
     case 'page':
-      return unique([...document.slugs.map(pagePath), '/sitemap.xml'])
+      return unique([...document.slugs.map(pageUrl), '/sitemap.xml'])
     case 'redirect':
       return document.redirectSources.filter((path) => path.startsWith('/'))
     default:

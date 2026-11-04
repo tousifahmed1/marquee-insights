@@ -1,34 +1,13 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
 import { ReportArticle } from '@/components/reports/report-article'
-import { getReport } from '@/content'
+import { loadReport } from '@/content'
 import { cacheHeaders } from '@/lib/cache-control'
-import { resolveSeo, seoHead } from '@/lib/seo'
-import { articleJsonLd } from '@/lib/structured-data'
+import { reportHead } from '@/lib/document-heads'
 
 export const Route = createFileRoute('/reports/$slug')({
-  loader: async ({ params }) => {
-    const report = await getReport({ data: { slug: params.slug } })
-    if (!report) throw notFound()
-    return report
-  },
-  head: ({ loaderData, match }) => {
-    if (!loaderData) return {}
-    const settings = match.context.siteSettings
-    const head = seoHead(
-      resolveSeo(settings, {
-        seo: loaderData.seo,
-        title: loaderData.title,
-        description: loaderData.excerpt,
-        image: loaderData.coverImage,
-        path: `/reports/${loaderData.slug}`,
-        type: 'article',
-        publishedAt: loaderData.publishedAt,
-        modifiedAt: loaderData.updatedAt,
-      }),
-    )
-    return { ...head, meta: [...head.meta, articleJsonLd(loaderData, settings)] }
-  },
+  loader: ({ params }) => loadReport(params.slug, { preview: false }),
+  head: ({ loaderData, match }) => reportHead(match.context.siteSettings, loaderData, { preview: false }),
   headers: () => cacheHeaders('content'),
   component: ReportPage,
 })

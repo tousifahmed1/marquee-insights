@@ -1,3 +1,4 @@
+import { reportUrl } from '@/content/urls'
 import type { Report, SiteSettings } from '@/content'
 import { imageUrl } from '@/lib/sanity-image'
 import { absoluteUrl } from '@/lib/site'
@@ -25,7 +26,7 @@ export function organizationJsonLd(settings: SiteSettings): JsonLdMeta {
 }
 
 export function articleJsonLd(report: Report, settings: SiteSettings): JsonLdMeta {
-  const url = absoluteUrl(`/reports/${report.slug}`)
+  const url = absoluteUrl(reportUrl(report.slug))
   const image = report.seo.ogImage ?? report.coverImage
   return {
     'script:ld+json': {

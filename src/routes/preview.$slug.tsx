@@ -1,20 +1,12 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
 import { ContentPage } from '@/components/content-page'
-import { getPage } from '@/content'
-import { resolveSeo, seoHead } from '@/lib/seo'
+import { loadPage } from '@/content'
+import { pageHead } from '@/lib/document-heads'
 
 export const Route = createFileRoute('/preview/$slug')({
-  loader: async ({ params }) => {
-    if (params.slug === 'home') throw notFound()
-    const page = await getPage({ data: { slug: params.slug, preview: true } })
-    if (!page) throw notFound()
-    return page
-  },
-  head: ({ loaderData, match }) =>
-    seoHead(
-      resolveSeo(match.context.siteSettings, { seo: loaderData?.seo, title: loaderData?.title }),
-    ),
+  loader: ({ params }) => loadPage(params.slug, { preview: true }),
+  head: ({ loaderData, match }) => pageHead(match.context.siteSettings, loaderData, { preview: true }),
   component: PreviewSlugPage,
 })
 

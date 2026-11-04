@@ -1,5 +1,6 @@
 import type { REDIRECTS_QUERY_RESULT, SITEMAP_QUERY_RESULT } from '../sanity.types'
 import type { Redirect, SitemapEntry } from '../types'
+import { pageUrl, reportUrl } from '../urls'
 import { isoDateTime } from './documents'
 import { list, record, text } from './primitives'
 
@@ -20,8 +21,8 @@ function entries(raw: unknown, toPath: (slug: string) => string): SitemapEntry[]
 export function mapSitemap(raw: SITEMAP_QUERY_RESULT | undefined): SitemapEntry[] {
   const data = record(raw)
   return [
-    ...entries(data?.pages, (slug) => (slug === 'home' ? '/' : `/${slug}`)),
-    ...entries(data?.reports, (slug) => `/reports/${slug}`),
+    ...entries(data?.pages, pageUrl),
+    ...entries(data?.reports, reportUrl),
   ]
 }
 

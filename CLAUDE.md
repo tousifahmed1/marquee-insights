@@ -68,6 +68,8 @@ tests/               Playwright smoke tests
 - Images from the CMS always have alt text and explicit width and height. Render them with `CmsImage`; mappers drop any image without alt text.
 - Queries use `defineQuery` in `src/content/queries.ts`. Mappers take the generated result types, never trust their shape at runtime, and return the closed types in `src/content/types.ts`: `null` or `[]` for missing content, never `undefined`. A block missing its required content is dropped by its mapper.
 - Components get content from route loaders that call the server functions in `src/content/functions.ts`. Site settings come from the root route context via `useSiteSettings()`.
+- Every CMS document route has a `/preview` copy. Both call the same loader from `src/content/loaders.ts` (`loadHome`, `loadPage`, `loadReport`, each with `{ preview }`) and the same head from `src/lib/document-heads.ts`, so a route file only says which loader, which head and which component. Only the published route adds `cacheHeaders('content')`. A new document type gets a loader and a head there, not inline in its routes.
+- Document URLs come from `pageUrl()` and `reportUrl()` in `src/content/urls.ts` (the `home` page is served at `/`). The sitemap, purge map, heads and JSON-LD all use them; never build `/reports/${slug}` by hand.
 - Links from the CMS go through `CmsLink`, and every href passes `safeHref()` (site paths, `https://` and `mailto:` only).
 
 ### Environment
@@ -93,7 +95,7 @@ tests/               Playwright smoke tests
 - Radix `Select` only fills in its value after hydration. Pass the selected label as `SelectValue` children so the server renders it.
 
 ### SEO
-- Every page route sets its head with `seoHead(resolveSeo(settings, { ... }))` from `src/lib/seo.ts`. Pass the page's `path` so it gets a canonical URL and `og:url`; leave it out for previews and pages without a public URL. Document SEO fields win over page fields, which win over the `siteSettings` defaults.
+- CMS document routes use the heads in `src/lib/document-heads.ts`; previews get no canonical URL and no structured data. Other page routes set their head with `seoHead(resolveSeo(settings, { ... }))` from `src/lib/seo.ts`. Pass the page's `path` so it gets a canonical URL and `og:url`; leave it out for previews and pages without a public URL. Document SEO fields win over page fields, which win over the `siteSettings` defaults.
 - Titles always read "Page title | Marquee Insights". `formatTitle()` adds the site name and removes it if an editor already typed it, so never add it by hand.
 - Absolute URLs come from `absoluteUrl()` in `src/lib/site.ts` (`VITE_SITE_URL`, defaulting to the workers.dev URL), never from the request, because cached HTML is shared by every visitor.
 - JSON-LD goes in `meta` as `{ 'script:ld+json': data }` (see `src/lib/structured-data.ts`). TanStack escapes it, so CMS text is safe there. Never render JSON-LD with `dangerouslySetInnerHTML`. The root route adds Organization data and report pages add Article data.
