@@ -127,6 +127,7 @@ tests/               Playwright smoke tests
 - Fonts are self-hosted with Fontsource (latin subset) and imported at the top of `app.css`. The two files the first screen needs are preloaded in `__root.tsx`. Never load fonts from Google or another origin: it costs about a second of render-blocking time on mobile.
 - Tailwind's default palette and scales are removed, so `bg-blue-500` or `text-7xl` will not compile. Add new values as tokens in `src/styles/tokens.css` first, then map them in `src/styles/app.css`.
 - `ui/slider.tsx` forwards `aria-label`, `aria-labelledby` and `aria-valuetext` to the thumb, the element with `role="slider"`; keep that if you regenerate it.
+- Scrollbars are styled once in `app.css` (thin, theme-coloured thumb that shows only while the pointer is over the scrolling area). Don't add per-component scrollbar styles.
 - Use shadcn components before writing new primitives. Add them with `pnpm dlx shadcn@latest add <name>`. Do not run `shadcn init`; the project is already configured.
 - Every animation respects `prefers-reduced-motion`. Motion components get this from `<MotionConfig reducedMotion="user">` in `__root.tsx` (transforms off, fades kept). Anything driven outside React (`Reveal`, GSAP) checks the media query itself.
 - Motion supports the content. No animation that delays reading or interaction.

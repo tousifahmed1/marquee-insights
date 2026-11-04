@@ -156,6 +156,18 @@
     @apply bg-primary text-primary-foreground;
   }
 
+  /* Scrollbars: thin, no visible track, and the thumb appears only while the
+     pointer is over the scrolling area, so a still page shows no bars. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  *:hover,
+  *:focus-within {
+    scrollbar-color: color-mix(in srgb, var(--muted-foreground) 55%, transparent) transparent;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
