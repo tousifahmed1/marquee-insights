@@ -5,26 +5,12 @@ import { CategoryFilter } from '@/components/reports/category-filter'
 import { Pagination } from '@/components/reports/pagination'
 import { ReportCard } from '@/components/reports/report-card'
 import { Section } from '@/components/section'
-import { categoryLabel, getReports, parseCategory, parsePage } from '@/content'
-import type { ReportCategory } from '@/content'
+import { categoryLabel, getReports, parseReportsSearch, reportsPath, reportsSearch } from '@/content'
 import { cacheHeaders } from '@/lib/cache-control'
 import { resolveSeo, seoHead } from '@/lib/seo'
 
-function reportsPath(category: ReportCategory | null, page: number): string {
-  const search = new URLSearchParams()
-  if (category) search.set('category', category)
-  if (page > 1) search.set('page', String(page))
-  return search.size === 0 ? '/reports' : `/reports?${search}`
-}
-
-type ReportsSearch = { page?: number; category?: ReportCategory }
-
 export const Route = createFileRoute('/reports/')({
-  validateSearch: (search: Record<string, unknown>): ReportsSearch => {
-    const page = parsePage(search.page)
-    const category = parseCategory(search.category)
-    return { ...(page > 1 ? { page } : {}), ...(category ? { category } : {}) }
-  },
+  validateSearch: parseReportsSearch,
   loaderDeps: ({ search }) => ({ page: search.page ?? 1, category: search.category ?? null }),
   loader: async ({ deps }) => {
     const reports = await getReports({ data: deps })
@@ -39,7 +25,7 @@ export const Route = createFileRoute('/reports/')({
       resolveSeo(match.context.siteSettings, {
         title: `${category}${page}`,
         description: 'Published research on viewing habits, release strategy and audience loyalty.',
-        path: reportsPath(loaderData.category, loaderData.page),
+        path: reportsPath(reportsSearch(loaderData.category, loaderData.page)),
       }),
     )
   },

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 
 import { Button } from '@/components/ui/button'
-import { REPORT_CATEGORIES } from '@/content'
+import { REPORT_CATEGORIES, reportsSearch } from '@/content'
 import type { ReportCategory } from '@/content'
 
 const OPTIONS: { value: ReportCategory | undefined; label: string }[] = [
@@ -24,7 +24,7 @@ export function CategoryFilter({ active }: { active: ReportCategory | null }) {
               >
                 <Link
                   to="/reports"
-                  search={option.value ? { category: option.value } : {}}
+                  search={reportsSearch(option.value ?? null, 1)}
                   aria-current={current ? 'page' : undefined}
                 >
                   {option.label}

@@ -1,4 +1,4 @@
-import { parseCategory, parsePage } from '@/content/inputs'
+import { parseReportsSearch, reportsPath } from '@/content/reports-search'
 import { isPreviewUrlPath } from '@/lib/preview-session'
 
 // Left entirely to the app: never redirected, never cached.
@@ -7,12 +7,11 @@ const APP_PREFIXES = ['/api', '/_serverFn']
 const UNCACHED_PREFIXES = ['/explore']
 const MAX_PATH_LENGTH = 200
 
-// Only canonical query strings are cached, so junk parameters can't fill KV.
-const CACHEABLE_SEARCH: Record<string, Record<string, (value: string) => boolean>> = {
-  '/reports': {
-    category: (value) => parseCategory(value) === value,
-    page: (value) => value !== '1' && String(parsePage(value)) === value,
-  },
+// A route with search params registers how it writes its canonical URL. Only a
+// query that is already canonical is cached, so junk parameters can't fill KV
+// and the cache always agrees with the route.
+const CANONICAL_PATH: Record<string, (raw: Record<string, string>) => string> = {
+  '/reports': (raw) => reportsPath(parseReportsSearch(raw)),
 }
 
 export type EdgeRoute = {
@@ -40,12 +39,11 @@ function cacheablePath({ pathname, searchParams }: URL): string | null {
   if (pathname.length > MAX_PATH_LENGTH || /\.[a-z0-9]+$/i.test(pathname)) return null
   if (UNCACHED_PREFIXES.some((prefix) => hasPrefix(pathname, prefix))) return null
 
-  const allowed = CACHEABLE_SEARCH[pathname] ?? {}
-  const params = [...searchParams.entries()]
-  const names = new Set(params.map(([name]) => name))
-  if (names.size !== params.length) return null
-  if (!params.every(([name, value]) => allowed[name]?.(value) === true)) return null
+  const params = [...searchParams.entries()].sort(([a], [b]) => a.localeCompare(b))
+  if (params.length === 0) return pathname
+  if (new Set(params.map(([name]) => name)).size !== params.length) return null
 
-  const search = new URLSearchParams(params.sort(([a], [b]) => a.localeCompare(b)))
-  return search.size === 0 ? pathname : `${pathname}?${search}`
+  const requested = `${pathname}?${new URLSearchParams(params)}`
+  const canonical = CANONICAL_PATH[pathname]?.(Object.fromEntries(params))
+  return canonical === requested ? canonical : null
 }

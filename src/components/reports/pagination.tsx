@@ -1,16 +1,14 @@
 import { Link } from '@tanstack/react-router'
 
 import { Button } from '@/components/ui/button'
+import { reportsSearch } from '@/content'
 import type { ReportList } from '@/content'
 
 type PaginationProps = Pick<ReportList, 'page' | 'totalPages' | 'category'>
 
 export function Pagination({ page, totalPages, category }: PaginationProps) {
   if (totalPages <= 1) return null
-  const searchFor = (target: number) => ({
-    ...(category ? { category } : {}),
-    ...(target > 1 ? { page: target } : {}),
-  })
+  const searchFor = (target: number) => reportsSearch(category, target)
 
   return (
     <nav aria-label="Pagination" className="mt-10 flex items-center justify-between gap-4">
