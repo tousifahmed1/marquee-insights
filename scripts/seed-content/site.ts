@@ -27,6 +27,7 @@ export function siteSettings(images: SiteImages) {
     footerLinks: items([
       link('Reports', '/reports'),
       link('Explore the data', '/explore'),
+      link('Ask the data', '/ask'),
       link('About us', '/about'),
       link('Contact', '/contact'),
     ]),
@@ -82,8 +83,8 @@ export function homePage() {
       }),
       section('ctaBanner', {
         heading: 'Ask the panel your own question',
-        text: 'Filter every survey wave by age, region, platform and genre, and share the exact view you found.',
-        button: link('Explore the data', '/explore'),
+        text: 'Type a question in plain English and get the answer straight from the survey data, with the SQL that produced it.',
+        button: link('Ask a question', '/ask'),
       }),
     ],
     seo: {
