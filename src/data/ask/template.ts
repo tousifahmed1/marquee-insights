@@ -18,10 +18,14 @@ const LABELS = new Map<string, string>(
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-export function formatValue(value: unknown): string | null {
+// Averages, shares and rates always show one decimal, so 8.0 never reads as 8.
+const DECIMAL_COLUMN = /(^|_)(avg|average|mean|pct|percent|percentage|share|rate|ratio)(_|$)/i
+
+export function formatValue(value: unknown, column = ''): string | null {
   if (value === null || value === undefined) return null
   if (typeof value === 'number') {
     if (!Number.isFinite(value)) return null
+    if (DECIMAL_COLUMN.test(column)) return value.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
     return Number.isInteger(value) ? value.toLocaleString('en-US') : String(value)
   }
   if (typeof value === 'boolean') return value ? 'yes' : 'no'
@@ -37,7 +41,7 @@ export function fillTemplate(template: string, row: Row | undefined): string | n
   if (!row || !template.trim()) return null
   let complete = true
   const filled = template.replace(PLACEHOLDER, (_match, name: string) => {
-    const formatted = name in row ? formatValue(row[name]) : null
+    const formatted = name in row ? formatValue(row[name], name) : null
     if (formatted === null) complete = false
     return formatted ?? ''
   })

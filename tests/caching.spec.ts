@@ -12,7 +12,7 @@ const expectPolicy = (
   }
 }
 
-const UNCACHED_PATHS = new Set(['/explore'])
+const UNCACHED_PATHS = new Set(['/explore', '/ask'])
 
 for (const { href: to } of NAV_LINKS.filter(({ href }) => !UNCACHED_PATHS.has(href))) {
   test(`${to} is cached at the edge as a content page`, async ({ request }) => {

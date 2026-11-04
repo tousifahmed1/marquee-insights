@@ -12,7 +12,7 @@ const canonicals = (html: string) =>
   [...html.matchAll(/<link rel="canonical" href="([^"]+)"/g)].map((match) => match[1])
 
 test('pages have a formatted title, one canonical URL and Organization data', async ({ request }) => {
-  for (const path of ['/', '/about', '/reports', '/explore']) {
+  for (const path of ['/', '/about', '/reports', '/explore', '/ask']) {
     const html = await (await request.get(path)).text()
     expect(html, path).toMatch(/<title>[^<]+ \| Marquee Insights<\/title>|<title>Marquee Insights<\/title>/)
     expect(canonicals(html), path).toEqual([`${SITE}${path}`])
@@ -47,7 +47,7 @@ test('sitemap.xml lists the site and every report, and robots.txt points to it',
   expect(sitemap.headers()['content-type']).toContain('application/xml')
   const xml = await sitemap.text()
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])
-  expect(locs).toEqual(expect.arrayContaining([`${SITE}/`, `${SITE}/reports`, `${SITE}/explore`]))
+  expect(locs).toEqual(expect.arrayContaining([`${SITE}/`, `${SITE}/reports`, `${SITE}/explore`, `${SITE}/ask`]))
   expect(new Set(locs).size).toBe(locs.length)
 
   const listing = await (await request.get('/reports')).text()

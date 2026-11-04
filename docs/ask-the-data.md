@@ -74,6 +74,12 @@ Example questions skip the IP limit and Turnstile, since they are ours, but stil
 
 For development and e2e runs, Cloudflare's always-passing test pair `1x00000000000000000000AA` / `1x0000000000000000000000000000000AA` works without a widget.
 
+## The page
+
+`/ask` (`src/routes/ask.tsx`, components in `src/components/ask`) renders the intro, the form, the six example buttons and the note on the server; nothing on the first view needs data. After hydration the Turnstile widget mounts under the form. Submitting calls the `askTheData` server function with the question and, for a typed question, the Turnstile token; example buttons send no token. One request runs at a time: the button is disabled while a request is in flight and a second submit is ignored. Enter asks, Shift+Enter adds a line, and the counter shows the 300-character limit.
+
+An answer shows the sentence, a timings line ("model 1.9 s, query 967 ms, total 2.9 s, via Gemini", or a "cached" badge with the time), a bar or line chart when the model suggested one and the rows suit it, the result table (averages and shares always with one decimal), and a "Show SQL" panel with the formatted query and a copy button. Refused, failed, rate-limited, over-budget, out-of-capacity and unverified outcomes each get their own card, and a skeleton laid out like an answer shows while a request runs. The page sends `Cache-Control: no-store`, is listed in the sitemap and the nav, and is linked from the explorer intro.
+
 ## Read-only role
 
 Every query from this feature runs on the `ask_readonly` role, inside a `READ ONLY` transaction, with `SET LOCAL statement_timeout = '3s'`. The role itself also carries the timeout and read-only defaults, so the limits hold even if the code is wrong.

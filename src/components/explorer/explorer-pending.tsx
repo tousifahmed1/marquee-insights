@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router'
+
 import { Container } from '@/components/container'
 import { Section } from '@/components/section'
 
@@ -7,7 +9,11 @@ export function ExplorerIntro() {
       <h1 className="text-5xl">Audience explorer</h1>
       <p className="mt-4 max-w-prose text-lg text-muted-foreground">
         50,000 survey responses from the last 12 monthly waves. Filter by show, audience and month,
-        and every view gets its own link.
+        and every view gets its own link. Or{' '}
+        <Link to="/ask" className="text-highlight underline decoration-highlight underline-offset-4">
+          ask the data a question
+        </Link>{' '}
+        in plain English.
       </p>
     </>
   )

@@ -3,7 +3,7 @@ import type { SitemapEntry } from '@/content'
 import { absoluteUrl } from './site'
 
 // Pages that exist in code rather than as CMS documents.
-export const STATIC_SITEMAP_PATHS = ['/', '/reports', '/explore']
+export const STATIC_SITEMAP_PATHS = ['/', '/reports', '/explore', '/ask']
 
 const escapeXml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

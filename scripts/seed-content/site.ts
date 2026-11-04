@@ -20,6 +20,7 @@ export function siteSettings(images: SiteImages) {
       link('Home', '/'),
       link('Reports', '/reports'),
       link('Explore', '/explore'),
+      link('Ask', '/ask'),
       link('About', '/about'),
       link('Contact', '/contact'),
     ]),

@@ -4,7 +4,7 @@ import { isPreviewUrlPath } from '@/lib/preview-session'
 // Left entirely to the app: never redirected, never cached.
 const APP_PREFIXES = ['/api', '/_serverFn']
 // Can be redirected, but always rendered fresh.
-const UNCACHED_PREFIXES = ['/explore']
+const UNCACHED_PREFIXES = ['/explore', '/ask']
 const MAX_PATH_LENGTH = 200
 
 // A route with search params registers how it writes its canonical URL. Only a

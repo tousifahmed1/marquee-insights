@@ -20,7 +20,7 @@ describe('classify', () => {
     },
   )
 
-  it.each(['/explore', '/explore?platform=tidewell', '/assets/app.css', '/robots.txt', `/${'a'.repeat(201)}`])(
+  it.each(['/explore', '/explore?platform=tidewell', '/ask', '/assets/app.css', '/robots.txt', `/${'a'.repeat(201)}`])(
     'redirects but never caches %s',
     (path) => {
       expect(route(path)).toEqual({ redirects: true, cachePath: null })

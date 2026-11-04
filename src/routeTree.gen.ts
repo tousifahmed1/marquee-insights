@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
+import { Route as AskRouteImport } from './routes/ask'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
@@ -34,6 +35,11 @@ const IndexRoute = IndexRouteImport.update({
 const SlugRoute = SlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AskRoute = AskRouteImport.update({
+  id: '/ask',
+  path: '/ask',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -110,6 +116,7 @@ const PreviewReportsSlugRoute = PreviewReportsSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
+  '/ask': typeof AskRoute
   '/explore': typeof ExploreRoute
   '/preview': typeof PreviewRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
+  '/ask': typeof AskRoute
   '/explore': typeof ExploreRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
+  '/ask': typeof AskRoute
   '/explore': typeof ExploreRoute
   '/preview': typeof PreviewRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$slug'
+    | '/ask'
     | '/explore'
     | '/preview'
     | '/robots.txt'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$slug'
+    | '/ask'
     | '/explore'
     | '/robots.txt'
     | '/sitemap.xml'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/$slug'
+    | '/ask'
     | '/explore'
     | '/preview'
     | '/robots.txt'
@@ -220,6 +232,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SlugRoute: typeof SlugRoute
+  AskRoute: typeof AskRoute
   ExploreRoute: typeof ExploreRoute
   PreviewRoute: typeof PreviewRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -247,6 +260,13 @@ declare module '@tanstack/react-router' {
       path: '/$slug'
       fullPath: '/$slug'
       preLoaderRoute: typeof SlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ask': {
+      id: '/ask'
+      path: '/ask'
+      fullPath: '/ask'
+      preLoaderRoute: typeof AskRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -368,6 +388,7 @@ const PreviewRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SlugRoute: SlugRoute,
+  AskRoute: AskRoute,
   ExploreRoute: ExploreRoute,
   PreviewRoute: PreviewRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,

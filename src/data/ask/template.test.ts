@@ -43,6 +43,13 @@ describe('answerFrom', () => {
 })
 
 describe('formatValue', () => {
+  it('shows one decimal for averages and shares even when the value is whole', () => {
+    expect(formatValue(8, 'avg_satisfaction')).toBe('8.0')
+    expect(formatValue(73, 'recommend_pct')).toBe('73.0')
+    expect(formatValue(8, 'responses')).toBe('8')
+    expect(fillTemplate('{avg_intent} out of 100', { avg_intent: 50 })).toBe('50.0 out of 100')
+  })
+
   it('formats dates as month and year, booleans as words, and keeps unknown strings', () => {
     expect(formatValue('2026-10-01')).toBe('Oct 2026')
     expect(formatValue(true)).toBe('yes')
