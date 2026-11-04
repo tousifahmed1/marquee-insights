@@ -87,3 +87,17 @@ test('explore says "intent to watch", ranks platforms and separates show names f
   const show = await page.getByRole('region', RESULTS).locator('tbody td:nth-child(2)').first().textContent()
   expect(show).toMatch(/^\S.*, \S/)
 })
+
+test('a client-side visit to explore shows its layout while the first data loads', async ({ page }) => {
+  await gotoHydrated(page, '/about')
+  await page.route('**/_serverFn/**', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    await route.continue()
+  })
+  await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Explore' }).click()
+
+  await expect(page.getByRole('heading', { level: 1, name: 'Audience explorer' })).toBeVisible({ timeout: 1000 })
+  await expect(page.getByRole('status').filter({ hasText: 'Loading the explorer' })).toBeAttached()
+  await expect(page.getByRole('region', RESULTS)).toBeVisible({ timeout: 10_000 })
+  await expect(page.getByText('Loading the explorer')).toHaveCount(0)
+})

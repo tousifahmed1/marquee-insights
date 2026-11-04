@@ -4,6 +4,7 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 import { Container } from '@/components/container'
 import { ExplorerCharts } from '@/components/explorer/explorer-charts'
 import { ExplorerError } from '@/components/explorer/explorer-error'
+import { ExplorerIntro, ExplorerPending } from '@/components/explorer/explorer-pending'
 import { FilterPanel } from '@/components/explorer/filter-panel'
 import { MobileFilters } from '@/components/explorer/mobile-filters'
 import { ResultsStatus } from '@/components/explorer/results-status'
@@ -53,6 +54,12 @@ export const Route = createFileRoute('/explore')({
     ),
   headers: () => cacheHeaders('noStore'),
   errorComponent: ExplorerError,
+  // The first data is a round trip to Neon (about 300ms from far away), so a
+  // client-side visit shows the explorer layout at once instead of waiting on
+  // the previous page. Preloaded data skips it.
+  pendingComponent: ExplorerPending,
+  pendingMs: 0,
+  pendingMinMs: 0,
   component: ExplorerPage,
 })
 
@@ -71,11 +78,7 @@ function ExplorerPage() {
   return (
     <Section className="pt-12">
       <Container>
-        <h1 className="text-5xl">Audience explorer</h1>
-        <p className="mt-4 max-w-prose text-lg text-muted-foreground">
-          50,000 survey responses from the last 12 monthly waves. Filter by show, audience and
-          month, and every view gets its own link.
-        </p>
+        <ExplorerIntro />
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[var(--container-filters)_minmax(0,1fr)]">
           <aside aria-label="Filters" className="hidden lg:block">

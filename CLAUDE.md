@@ -87,7 +87,7 @@ tests/               Playwright smoke tests
 
 ### Data explorer
 - `/explore` keeps every filter, sort and page in the URL. `cleanSearch()` in `src/data/search.ts` validates them: invalid values are dropped, defaults are left out of the URL and an inverted wave range is swapped. Changing a filter resets the page.
-- The loader awaits the data on first load, so the server renders real rows and charts. On a search change (`cause === 'stay'`) it only prefetches; components read through `useQuery` with `keepPreviousData`, so the previous results stay on screen with an "Updating" indicator. Don't await in the loader for `stay`, or the controls lag behind the URL.
+- The loader awaits the data on first load, so the server renders real rows and charts. On a search change (`cause === 'stay'`) it only prefetches; components read through `useQuery` with `keepPreviousData`, so the previous results stay on screen with an "Updating" indicator. Don't await in the loader for `stay`, or the controls lag behind the URL. A client-side visit that isn't preloaded shows `ExplorerPending` at once (`pendingMs: 0`) instead of holding the previous page for the Neon round trip; keep it laid out like the real page so nothing moves when the data arrives. The server never renders it.
 - Charts use Recharts 2.15 because Recharts 3 renders nothing on the server. Axes, bars and tooltips must be direct children of the chart (no fragments or wrapper components), every chart gets `id={useId()}` so clip-path ids match after hydration, and every chart has a visually hidden data table.
 - Radix `Select` only fills in its value after hydration. Pass the selected label as `SelectValue` children so the server renders it.
 
