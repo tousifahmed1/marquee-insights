@@ -17,7 +17,7 @@ export function PreviewBanner() {
           <Eye aria-hidden className="size-4" />
           Preview mode: you are seeing draft content that is not published yet.
         </p>
-        <a href={exitHref} className="font-semibold underline underline-offset-4">
+        <a href={exitHref} className="font-semibold underline underline-offset-4 hover:decoration-2 focus-visible:outline-primary-foreground">
           Exit preview
         </a>
       </Container>

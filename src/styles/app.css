@@ -33,7 +33,6 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --color-highlight: var(--highlight);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -99,6 +98,19 @@
   --shadow-sm: var(--elevation-sm);
   --shadow-md: var(--elevation-md);
   --shadow-lg: var(--elevation-lg);
+  --shadow-bulb: var(--elevation-bulb);
+
+  --animate-bulb-chase: bulb-chase var(--duration-bulb) ease-in-out both;
+
+  @keyframes bulb-chase {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    45% {
+      opacity: 0.2;
+    }
+  }
 }
 
 @layer base {
@@ -112,6 +124,17 @@
 
   html {
     color-scheme: light;
+    scroll-padding-top: var(--height-header);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  label {
+    touch-action: manipulation;
   }
 
   html.dark {
@@ -124,7 +147,8 @@
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     @apply font-display font-normal text-balance;
   }
 

@@ -8,13 +8,21 @@ export function Quote({ block }: BlockProps<QuoteBlock>) {
   return (
     <Section>
       <Container width="prose">
-        <figure className="border-l-4 border-primary pl-8">
-          <blockquote className="font-display text-3xl text-balance">
-            <p>“{block.text}”</p>
+        <figure>
+          <blockquote className="font-display text-4xl text-balance">
+            <p className="relative">
+              <span className="block text-6xl leading-none text-highlight md:absolute md:right-full md:mr-4">
+                “
+              </span>
+              {block.text}”
+            </p>
           </blockquote>
-          <figcaption className="mt-6 text-muted-foreground">
-            <span className="font-medium text-foreground">{block.author}</span>
-            {block.role ? <span>, {block.role}</span> : null}
+          <figcaption className="mt-8 flex items-center gap-4 text-muted-foreground">
+            <span aria-hidden className="h-0.5 w-10 shrink-0 bg-primary" />
+            <span>
+              <span className="font-medium text-foreground">{block.author}</span>
+              {block.role ? <span>, {block.role}</span> : null}
+            </span>
           </figcaption>
         </figure>
       </Container>

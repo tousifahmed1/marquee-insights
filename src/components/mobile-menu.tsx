@@ -12,7 +12,7 @@ export function MobileMenu() {
   return (
     <MotionSheet>
       <MotionSheetTrigger asChild>
-        <Button type="button" variant="ghost" size="icon" className="md:hidden">
+        <Button type="button" variant="ghost" size="icon-lg" className="size-11 md:hidden">
           <Menu aria-hidden />
           <span className="sr-only">Open menu</span>
         </Button>

@@ -79,6 +79,11 @@
   --height-chart: 16rem;
   --height-table: 70vh;
   --height-sheet: 85dvh;
+  --height-header: 5rem;
+
+  /* Marquee bulbs: one chase around the frame on load */
+  --duration-bulb: 0.9s;
+  --delay-bulb-step: 35ms;
 
   /* Radius: tight and editorial, hierarchy comes from the shadcn calc scale */
   --radius: 0.375rem;
@@ -101,7 +106,6 @@
   --muted-foreground: var(--stone-600);
   --accent: var(--paper-200);
   --accent-foreground: var(--navy-900);
-  --highlight: var(--amber-700);
   --destructive: var(--red-600);
   --border: var(--paper-300);
   --input: var(--stone-500);
@@ -118,6 +122,7 @@
   --elevation-sm: 0 1px 2px hsl(var(--shadow-color) / 0.08);
   --elevation-md: 0 4px 12px -2px hsl(var(--shadow-color) / 0.12);
   --elevation-lg: 0 18px 40px -12px hsl(var(--shadow-color) / 0.2);
+  --elevation-bulb: 0 0 0 1px color-mix(in srgb, var(--amber-700) 35%, transparent);
 }
 
 .dark {
@@ -136,7 +141,6 @@
   --muted-foreground: var(--stone-400);
   --accent: var(--navy-700);
   --accent-foreground: var(--paper-100);
-  --highlight: var(--amber-400);
   --destructive: var(--red-400);
   --border: var(--navy-600);
   --input: var(--navy-400);
@@ -153,4 +157,5 @@
   --elevation-sm: 0 1px 2px hsl(var(--shadow-color) / 0.35);
   --elevation-md: 0 4px 12px -2px hsl(var(--shadow-color) / 0.45);
   --elevation-lg: 0 18px 40px -12px hsl(var(--shadow-color) / 0.6);
+  --elevation-bulb: 0 0 0.625rem color-mix(in srgb, var(--amber-400) 60%, transparent);
 }

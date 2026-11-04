@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 
 import { Reveal } from '@/components/motion/reveal'
 import type { SectionBlock } from '@/content'
@@ -13,6 +13,7 @@ const REVEALED_BLOCKS = new Set<SectionBlock['_type']>(['featureGrid', 'quote', 
 
 type SectionRendererProps = {
   sections: readonly SectionBlock[]
+  heroAside?: ReactNode
 }
 
 function blockFor(type: unknown): ComponentType<BlockProps<SectionBlock>> | null {
@@ -20,14 +21,17 @@ function blockFor(type: unknown): ComponentType<BlockProps<SectionBlock>> | null
   return BLOCK_MAP[type as SectionBlock['_type']] as ComponentType<BlockProps<SectionBlock>>
 }
 
-export function SectionRenderer({ sections }: SectionRendererProps) {
+export function SectionRenderer({ sections, heroAside }: SectionRendererProps) {
   const firstHero = sections.findIndex((section) => section?._type === 'hero')
   return (
     <>
       {sections.map((section, index) => {
         const Block = section ? blockFor(section._type) : null
         if (!section || !Block) return null
-        const block = <Block block={section} isPageHeading={index === firstHero} />
+        const isPageHeading = index === firstHero
+        const block = (
+          <Block block={section} isPageHeading={isPageHeading} aside={isPageHeading ? heroAside : undefined} />
+        )
         return REVEALED_BLOCKS.has(section._type) ? (
           <Reveal key={section._key}>{block}</Reveal>
         ) : (

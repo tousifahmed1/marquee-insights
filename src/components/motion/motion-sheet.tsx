@@ -60,7 +60,7 @@ export function MotionSheetContent({ side, className, children }: MotionSheetCon
             <motion.div
               data-slot="sheet-content"
               className={cn(
-                'fixed z-50 flex flex-col gap-4 bg-popover text-sm text-popover-foreground shadow-lg',
+                'fixed z-50 flex flex-col gap-4 overscroll-contain bg-popover text-sm text-popover-foreground shadow-lg',
                 sideClassName,
                 className,
               )}
@@ -71,7 +71,7 @@ export function MotionSheetContent({ side, className, children }: MotionSheetCon
             >
               {children}
               <Dialog.Close asChild>
-                <Button variant="ghost" size="icon-sm" className="absolute top-3 right-3">
+                <Button variant="ghost" size="icon-lg" className="absolute top-2 right-2 size-11">
                   <XIcon aria-hidden />
                   <span className="sr-only">Close</span>
                 </Button>

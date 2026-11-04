@@ -19,9 +19,8 @@ export function CategoryFilter({ active }: { active: ReportCategory | null }) {
             <li key={option.label}>
               <Button
                 asChild
-                size="sm"
                 variant={current ? 'default' : 'outline'}
-                className="rounded-full"
+                className="h-9 rounded-full px-4"
               >
                 <Link
                   to="/reports"

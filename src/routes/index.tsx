@@ -2,25 +2,27 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
 
 import { ContentPage } from '@/components/content-page'
-import { getPage } from '@/content'
+import { NowShowing } from '@/components/reports/now-showing'
+import { getLatestReport, getPage } from '@/content'
 import { cacheHeaders } from '@/lib/cache-control'
 import { resolveSeo, seoHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/')({
   loader: async () => {
-    const page = await getPage({ data: { slug: 'home' } })
+    const [page, latest] = await Promise.all([getPage({ data: { slug: 'home' } }), getLatestReport()])
     if (!page) throw notFound()
-    return page
+    return { page, latest }
   },
   head: ({ loaderData, match }) =>
     loaderData
-      ? seoHead(resolveSeo(match.context.siteSettings, { seo: loaderData.seo, path: '/' }))
+      ? seoHead(resolveSeo(match.context.siteSettings, { seo: loaderData.page.seo, path: '/' }))
       : {},
   headers: () => cacheHeaders('content'),
   component: HomePage,
 })
 
 function HomePage() {
+  const { page, latest } = Route.useLoaderData()
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -39,7 +41,7 @@ function HomePage() {
 
   return (
     <div ref={ref}>
-      <ContentPage page={Route.useLoaderData()} />
+      <ContentPage page={page} heroAside={latest ? <NowShowing report={latest} /> : null} />
     </div>
   )
 }

@@ -10,6 +10,20 @@ test('home page renders its CMS sections with a single h1', async ({ page }) => 
   expect(await page.locator('main section').count()).toBeGreaterThan(1)
 })
 
+test('home hero shows the newest report and opens it', async ({ page }) => {
+  await gotoHydrated(page, '/reports')
+  const newest = await page.locator('main article h2 a').first().getAttribute('href')
+
+  await gotoHydrated(page, '/')
+  const hero = page.locator('[data-scroll-moment="hero"]')
+  await expect(hero.getByText('Now showing')).toBeVisible()
+  const link = hero.locator('article h2 a')
+  await expect(link).toHaveAttribute('href', newest ?? '')
+  await link.click()
+  await expect(page).toHaveURL(newest ?? '')
+  await expect(page.getByRole('link', { name: 'Back to all reports' })).toBeVisible()
+})
+
 test('home page stats are in the page text exactly once', async ({ page }) => {
   await gotoHydrated(page, '/')
   const stats = page.locator('[data-scroll-moment="stats"]')

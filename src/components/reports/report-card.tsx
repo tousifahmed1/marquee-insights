@@ -32,7 +32,7 @@ export function ReportCard({ report }: { report: ReportSummary }) {
       )}
       <div>
         <ReportMeta report={report} />
-        <h2 className="mt-3 text-3xl">
+        <h2 className="mt-3 text-3xl break-words">
           <Link
             to="/reports/$slug"
             params={{ slug: report.slug }}

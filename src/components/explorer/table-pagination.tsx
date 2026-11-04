@@ -49,27 +49,27 @@ export function TablePagination({ page }: { page: ResponsePage }) {
       aria-label="Results pages"
       className="mt-4 flex flex-wrap items-center justify-between gap-4 text-sm"
     >
-      <p className="text-muted-foreground">
+      <p className="text-muted-foreground tabular-nums">
         {page.rows.length === 0
           ? `No rows on this page. ${formatInteger(page.total)} responses in total.`
           : `Showing ${formatInteger(first)}–${formatInteger(last)} of ${formatInteger(page.total)}`}
       </p>
       <div className="flex flex-wrap items-center gap-6">
         <FilterSelect
-            layout="inline"
-            label="Rows per page"
-            value={String(page.pageSize)}
-            options={SIZE_OPTIONS}
-            onChange={(size) => {
-              const next = PAGE_SIZES.find((option) => String(option) === size)
-              if (next) setPageSize(next)
-            }}
-          />
+          layout="inline"
+          label="Rows per page"
+          value={String(page.pageSize)}
+          options={SIZE_OPTIONS}
+          onChange={(size) => {
+            const next = PAGE_SIZES.find((option) => String(option) === size)
+            if (next) setPageSize(next)
+          }}
+        />
         <div className="flex items-center gap-2">
           <PageLink page={page.page - 1} label="Previous page" disabled={page.page <= 1}>
             <ChevronLeftIcon aria-hidden />
           </PageLink>
-          <span className="px-1">
+          <span className="px-1 tabular-nums">
             Page {formatInteger(page.page)} of {formatInteger(page.totalPages)}
           </span>
           <PageLink

@@ -16,7 +16,7 @@ import { siteSettingsQueryOptions } from '@/content/query-options'
 import { mapSiteSettings } from '@/content/mappers'
 import { resolveSeo, seoHead, statusSeo } from '@/lib/seo'
 import { organizationJsonLd } from '@/lib/structured-data'
-import { THEME_INIT_SCRIPT } from '@/lib/theme'
+import { DEFAULT_THEME, THEME_COLORS, THEME_INIT_SCRIPT } from '@/lib/theme'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -50,6 +50,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
+      { name: 'theme-color', content: THEME_COLORS[DEFAULT_THEME] },
       ...seoHead(rootSeo(match.context.siteSettings, matches)).meta,
       organizationJsonLd(match.context.siteSettings ?? FALLBACK_SETTINGS),
     ],

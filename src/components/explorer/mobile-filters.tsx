@@ -38,7 +38,7 @@ export function MobileFilters({ search, options, total }: MobileFiltersProps) {
           <SheetTitle>Filters</SheetTitle>
           <SheetDescription>Results update as you change each filter.</SheetDescription>
         </SheetHeader>
-        <div className="overflow-y-auto px-4 pb-2">
+        <div className="overflow-y-auto overscroll-contain px-4 pb-2">
           <FilterPanel search={search} options={options} />
         </div>
         <SheetFooter className="border-t">

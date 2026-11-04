@@ -1,9 +1,13 @@
 import { Moon, Sun } from 'lucide-react'
+import { useEffect } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { getCurrentTheme, setTheme } from '@/lib/theme'
+import { getCurrentTheme, setTheme, syncThemeColor } from '@/lib/theme'
 
 export function ThemeToggle() {
+  // The server renders the default theme's colour; match a saved choice.
+  useEffect(() => syncThemeColor(getCurrentTheme()), [])
+
   return (
     <Button
       type="button"

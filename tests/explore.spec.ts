@@ -1,20 +1,29 @@
 import { expect, test } from '@playwright/test'
+import type { Locator } from '@playwright/test'
 
 import { gotoHydrated } from './helpers'
 
 const RESULTS = { name: 'Survey responses, scrollable' }
+
+// Finds a column's cells by its header, so reordering columns never breaks a test.
+async function columnCells(table: Locator, header: string): Promise<Locator> {
+  const headers = (await table.locator('thead th').allTextContents()).map((text) => text.trim())
+  const index = headers.indexOf(header)
+  expect(index, `column "${header}" in ${headers.join(', ')}`).toBeGreaterThanOrEqual(0)
+  return table.locator(`tbody td:nth-child(${index + 1})`)
+}
 
 test('explore filters update the URL and table, and a reload restores the view', async ({ page }) => {
   await gotoHydrated(page, '/explore')
   const status = page.locator('main [aria-live="polite"]')
   const table = page.getByRole('region', RESULTS)
   const rows = table.locator('tbody tr')
-  const platformCells = table.locator('tbody td:nth-child(3)')
   const platformSelect = page
     .getByRole('complementary', { name: 'Filters' })
     .getByRole('combobox', { name: 'Platform' })
 
   await expect(status).toHaveText(/^[\d,]+ responses$/)
+  const platformCells = await columnCells(table, 'Platform')
   const totalBefore = await status.textContent()
   expect(new Set(await platformCells.allTextContents()).size).toBeGreaterThan(1)
 
@@ -62,9 +71,10 @@ test('sorting by a column is kept in the URL', async ({ page }) => {
   await expect(page).toHaveURL(/\/explore\?genre=documentary&sort=intent$/)
   const header = table.getByRole('columnheader', { name: 'Intent to watch' })
   await expect(header).toHaveAttribute('aria-sort', 'descending')
+  const intentCells = await columnCells(table, 'Intent to watch')
   await expect
     .poll(async () => {
-      const values = (await table.locator('tbody td:nth-child(8)').allTextContents()).map(Number)
+      const values = (await intentCells.allTextContents()).map(Number)
       return values.length === 25 && values.every((value, i) => i === 0 || values[i - 1]! >= value)
     })
     .toBe(true)
@@ -84,7 +94,7 @@ test('explore says "intent to watch", ranks platforms and separates show names f
   expect(averages.length).toBeGreaterThan(1)
   expect(averages).toEqual([...averages].sort((a, b) => b - a))
 
-  const show = await page.getByRole('region', RESULTS).locator('tbody td:nth-child(2)').first().textContent()
+  const show = await (await columnCells(page.getByRole('region', RESULTS), 'Show')).first().textContent()
   expect(show).toMatch(/^\S.*, \S/)
 })
 

@@ -46,6 +46,20 @@ describe('SectionRenderer', () => {
     expect(html.match(/<h1/g)).toHaveLength(1)
   })
 
+  it('puts the hero aside beside the first hero only', async () => {
+    const html = await renderWithRouter(
+      <SectionRenderer
+        heroAside={<p>Beside the hero</p>}
+        sections={mapSections([
+          { _key: 'a', _type: 'hero', heading: 'First' },
+          { _key: 'b', _type: 'hero', heading: 'Second' },
+        ])}
+      />,
+    )
+    expect(html.match(/Beside the hero/g)).toHaveLength(1)
+    expect(html.indexOf('Beside the hero')).toBeLessThan(html.indexOf('Second'))
+  })
+
   it('skips unknown and empty entries that bypass the mapper instead of crashing', async () => {
     const unsafe = [null, { _type: 'carousel', _key: 'x' }, { _type: 'constructor', _key: 'y' }]
     const html = await renderWithRouter(

@@ -68,7 +68,7 @@ export function ResultsTable({ page, query, error, onRetry }: ResultsTableProps)
     <div>
       <h2 className="sr-only">Responses</h2>
       <div
-        className="max-h-table overflow-auto rounded-lg border"
+        className="max-h-table overflow-auto overscroll-x-contain rounded-lg border focus-visible:outline-offset-2"
         tabIndex={0}
         role="region"
         aria-label="Survey responses, scrollable"
@@ -97,8 +97,8 @@ export function ResultsTable({ page, query, error, onRetry }: ResultsTableProps)
                           type="button"
                           onClick={header.column.getToggleSortingHandler()}
                           className={cn(
-                            'inline-flex items-center gap-1 rounded-sm hover:text-foreground',
-                            sorted && 'text-foreground',
+                            'inline-flex items-center gap-1 rounded-sm underline-offset-8 hover:text-foreground focus-visible:outline-offset-2',
+                            sorted && 'text-foreground underline decoration-highlight decoration-2',
                           )}
                         >
                           <table.FlexRender header={header} />
@@ -127,7 +127,11 @@ export function ResultsTable({ page, query, error, onRetry }: ResultsTableProps)
                   return (
                     <td
                       key={cell.id}
-                      className={cn('px-3 py-2.5', numeric && 'text-right tabular-nums')}
+                      className={cn(
+                        'px-3 py-2.5',
+                        numeric && 'text-right tabular-nums',
+                        cell.column.getIsSorted() && 'bg-secondary/50',
+                      )}
                     >
                       <table.FlexRender cell={cell} />
                     </td>

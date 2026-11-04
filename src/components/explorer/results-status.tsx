@@ -16,7 +16,7 @@ export function ResultsStatus({ total, updating }: ResultsStatusProps) {
       {updating ? (
         <span className="inline-flex items-center gap-2 text-foreground">
           <span className="size-2 rounded-full bg-primary motion-safe:animate-pulse" aria-hidden />
-          Updating
+          Updating…
         </span>
       ) : null}
     </p>

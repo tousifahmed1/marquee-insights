@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 
 import { Container } from '@/components/container'
 import { CategoryFilter } from '@/components/reports/category-filter'
@@ -72,7 +72,14 @@ function ReportsPage() {
           </div>
         ) : (
           <p className="mt-10 max-w-prose text-lg">
-            No reports in this category yet. Try another category, or see all reports.
+            No reports in this category yet. Try another category, or{' '}
+            <Link
+              to="/reports"
+              className="underline decoration-highlight decoration-2 underline-offset-4 hover:text-highlight"
+            >
+              see all reports
+            </Link>
+            .
           </p>
         )}
         <Pagination page={page} totalPages={totalPages} category={category} />

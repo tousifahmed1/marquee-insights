@@ -29,7 +29,7 @@ export function Footer() {
             ))}
           </ul>
         </nav>
-        <p className="text-xs text-muted-foreground md:col-span-2">
+        <p className="text-xs text-muted-foreground md:col-span-2" suppressHydrationWarning>
           © {new Date().getFullYear()} {siteName}
         </p>
       </Container>

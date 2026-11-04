@@ -8,25 +8,36 @@ import { cn } from '@/lib/utils'
 
 import type { BlockProps } from './block-props'
 
-export function Hero({ block, isPageHeading }: BlockProps<HeroBlock>) {
+export function Hero({ block, isPageHeading, aside }: BlockProps<HeroBlock>) {
   const Heading = isPageHeading ? 'h1' : 'h2'
   const hasCtas = block.primaryCta || block.secondaryCta
+  const side = block.image ? (
+    <CmsImage
+      image={block.image}
+      aspectRatio={4 / 5}
+      sizes="(min-width: 76rem) 34rem, (min-width: 48rem) 45vw, 100vw"
+      priority={isPageHeading}
+      className="rounded-lg"
+    />
+  ) : (
+    aside
+  )
 
   return (
     <Section data-scroll-moment="hero">
       <Container
-        className={cn(block.image && 'grid items-center gap-12 md:grid-cols-[1.15fr_1fr]')}
+        className={cn(side && 'grid items-center gap-16 md:grid-cols-[1.15fr_1fr] md:gap-12')}
       >
         <div>
           {block.eyebrow ? (
             <p className="mb-6 text-sm font-medium text-highlight">{block.eyebrow}</p>
           ) : null}
-          <Heading data-scroll-moment="headline" className="max-w-4xl text-6xl">{block.heading}</Heading>
+          <Heading data-scroll-moment="headline" className="max-w-4xl text-6xl break-words">{block.heading}</Heading>
           {block.subheading ? (
             <p className="mt-8 max-w-prose text-lg text-muted-foreground">{block.subheading}</p>
           ) : null}
           {hasCtas ? (
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div className="mt-10 flex flex-wrap gap-3 *:h-auto *:min-h-11 *:max-w-full *:py-2 *:text-center *:whitespace-normal">
               {block.primaryCta ? (
                 <Button size="lg" asChild>
                   <CmsLink href={block.primaryCta.href}>{block.primaryCta.label}</CmsLink>
@@ -40,15 +51,7 @@ export function Hero({ block, isPageHeading }: BlockProps<HeroBlock>) {
             </div>
           ) : null}
         </div>
-        {block.image ? (
-          <CmsImage
-            image={block.image}
-            aspectRatio={4 / 5}
-            sizes="(min-width: 76rem) 34rem, (min-width: 48rem) 45vw, 100vw"
-            priority={isPageHeading}
-            className="rounded-lg"
-          />
-        ) : null}
+        {side ?? null}
       </Container>
     </Section>
   )

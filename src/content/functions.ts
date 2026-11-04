@@ -11,6 +11,7 @@ import {
   mapSiteSettings,
 } from './mappers'
 import { isPreviewEnabled } from './preview'
+import type { ReportSummary } from './types'
 import {
   PAGE_BY_SLUG_QUERY,
   REPORTS_QUERY,
@@ -62,3 +63,14 @@ export const getReport = createServerFn({ method: 'GET' })
     const raw = await client.fetch(REPORT_BY_SLUG_QUERY, { slug: data.slug })
     return mapReport(raw)
   })
+
+// The newest report for the home page. A failure here leaves the hero without
+// it rather than failing the whole page.
+export async function getLatestReport(): Promise<ReportSummary | null> {
+  try {
+    const list = await getReports({ data: { page: 1 } })
+    return list.items[0] ?? null
+  } catch {
+    return null
+  }
+}

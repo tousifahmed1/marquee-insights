@@ -18,7 +18,7 @@ export function Stats({ block }: BlockProps<StatsBlock>) {
                 className="absolute inset-x-0 top-0 h-px bg-border"
               />
               <dt className="text-muted-foreground">{item.label}</dt>
-              <dd className="font-display text-5xl">
+              <dd className="font-display text-5xl tabular-nums">
                 <span className="sr-only">{item.value}</span>
                 {/* Drawn from the attribute so the count-up never puts a second copy in the page text. */}
                 <span

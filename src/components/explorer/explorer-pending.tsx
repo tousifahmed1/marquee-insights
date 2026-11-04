@@ -27,7 +27,7 @@ export function ExplorerPending() {
           className="mt-10 grid gap-10 lg:grid-cols-[var(--container-filters)_minmax(0,1fr)]"
         >
           <p className="sr-only" role="status">
-            Loading the explorer
+            Loading the explorer…
           </p>
           <div aria-hidden className="hidden space-y-6 lg:block">
             {FILTERS.map((filter) => (

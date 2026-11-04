@@ -14,7 +14,7 @@ export function ReportArticle({ report }: { report: Report }) {
       <Section className="pb-12">
         <Container width="prose">
           <ReportMeta report={report} />
-          <h1 className="mt-4 text-5xl">{report.title}</h1>
+          <h1 className="mt-4 text-5xl break-words">{report.title}</h1>
           {report.excerpt ? (
             <p className="mt-6 text-xl text-muted-foreground">{report.excerpt}</p>
           ) : null}
@@ -37,7 +37,7 @@ export function ReportArticle({ report }: { report: Report }) {
           <p className="mt-16 border-t pt-8">
             <Link
               to="/reports"
-              className="font-medium underline decoration-highlight decoration-2 underline-offset-4"
+              className="font-medium underline decoration-highlight decoration-2 underline-offset-4 hover:text-highlight"
             >
               Back to all reports
             </Link>

@@ -15,8 +15,16 @@ export function getCurrentTheme(): Theme {
   return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
 }
 
+// Browser toolbar colours, matching --background in tokens.css for each theme.
+export const THEME_COLORS: Record<Theme, string> = { dark: '#142340', light: '#f4eee2' }
+
+export function syncThemeColor(theme: Theme) {
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[theme])
+}
+
 export function setTheme(theme: Theme) {
   document.documentElement.classList.toggle('dark', theme === 'dark')
+  syncThemeColor(theme)
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme)
   } catch {
