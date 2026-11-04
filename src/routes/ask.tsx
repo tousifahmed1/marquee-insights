@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { AskForm } from '@/components/ask/ask-form'
 import { AskResult } from '@/components/ask/ask-result'
@@ -30,24 +30,39 @@ export const Route = createFileRoute('/ask')({
 function AskPage() {
   const [draft, setDraft] = useState('')
   const [asked, setAsked] = useState('')
+  // True from the moment of submit, including the wait for a Turnstile token
+  // before the request itself starts.
+  const [submitting, setSubmitting] = useState(false)
+  const resultRef = useRef<HTMLDivElement>(null)
   const turnstile = useTurnstile(import.meta.env.VITE_TURNSTILE_SITE_KEY)
   const mutation = useMutation({
     mutationFn: (data: AskInput) => askTheData({ data }),
   })
+  const pending = submitting || mutation.isPending
+
+  // Bring the loading card into view as soon as a question is sent.
+  useEffect(() => {
+    if (!pending) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    resultRef.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
+  }, [pending])
 
   // One request at a time; a second submit while one is in flight is ignored.
   const submit = async (question: string, example: boolean) => {
     const trimmed = question.trim()
-    if (!trimmed || mutation.isPending) return
+    if (!trimmed || pending) return
+    setSubmitting(true)
     setDraft(trimmed)
     setAsked(trimmed)
-    const turnstileToken = example ? undefined : await turnstile.getToken()
     try {
+      const turnstileToken = example ? undefined : await turnstile.getToken()
       const outcome = await mutation.mutateAsync({ question: trimmed, turnstileToken })
       // A token is spent once it reaches the server's check; cache hits never do.
       if (!example && !('cached' in outcome && outcome.cached)) turnstile.reset()
     } catch {
       if (!example) turnstile.reset()
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -64,20 +79,17 @@ function AskPage() {
           question={draft}
           onChange={setDraft}
           onSubmit={() => void submit(draft, false)}
-          pending={mutation.isPending}
+          pending={pending}
           turnstileContainer={turnstile.container}
         />
-        <ExampleQuestions onPick={(question) => void submit(question, true)} pending={mutation.isPending} />
       </Container>
-      <Container className="mt-10" width="page">
-        <div className="mx-auto max-w-4xl" aria-live="polite">
-          <AskResult
-            question={asked}
-            pending={mutation.isPending}
-            failed={mutation.isError}
-            outcome={mutation.data}
-          />
+      <Container width="page">
+        <div ref={resultRef} className="mx-auto max-w-4xl scroll-mt-24 empty:hidden [&:not(:empty)]:mt-10" aria-live="polite">
+          <AskResult question={asked} pending={pending} failed={mutation.isError} outcome={mutation.data} />
         </div>
+      </Container>
+      <Container width="prose">
+        <ExampleQuestions onPick={(question) => void submit(question, true)} pending={pending} />
       </Container>
     </Section>
   )
