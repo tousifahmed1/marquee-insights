@@ -3,28 +3,20 @@ import type { ExplorerFilters, ExplorerQuery, PageSize, SortDirection, SortField
 
 export type ExplorerSearch = Partial<ExplorerQuery>
 
-export const FILTER_KEYS = [
-  'show',
-  'genre',
-  'platform',
-  'region',
-  'ageGroup',
-  'waveFrom',
-  'waveTo',
-  'minAwareness',
-] as const satisfies readonly (keyof ExplorerFilters)[]
+// The filter schema is the only list of filters.
+export const FILTER_KEYS = Object.keys(filterShape) as (keyof ExplorerFilters)[]
 
-const SEARCH_KEYS = [...FILTER_KEYS, 'sort', 'dir', 'page', 'pageSize'] as const
+const SEARCH_KEYS = [...FILTER_KEYS, ...(Object.keys(queryShape) as (keyof typeof queryShape)[])]
 
 const FIELD_SCHEMAS = { ...filterShape, ...queryShape }
 
-const NUMERIC_KEYS = new Set<string>(['show', 'minAwareness', 'page', 'pageSize'])
-
-function coerce(key: string, value: unknown): unknown {
-  if (NUMERIC_KEYS.has(key) && typeof value === 'string' && /^\d+$/.test(value)) {
-    return Number(value)
-  }
-  return value
+// URL values arrive as strings. A digit string that fails its schema is tried
+// again as a number, so numeric fields need no list of their own.
+function parseField(key: (typeof SEARCH_KEYS)[number], raw: unknown) {
+  const schema = FIELD_SCHEMAS[key]
+  const direct = schema.safeParse(raw)
+  if (direct.success || typeof raw !== 'string' || !/^\d+$/.test(raw)) return direct
+  return schema.safeParse(Number(raw))
 }
 
 function isDefault(key: string, value: unknown): boolean {
@@ -36,7 +28,7 @@ export function cleanSearch(input: Record<string, unknown>): ExplorerSearch {
   for (const key of SEARCH_KEYS) {
     const raw = input[key]
     if (raw === undefined || raw === null || raw === '') continue
-    const parsed = FIELD_SCHEMAS[key].safeParse(coerce(key, raw))
+    const parsed = parseField(key, raw)
     if (parsed.success && parsed.data !== undefined && !isDefault(key, parsed.data)) {
       search[key] = parsed.data
     }
@@ -61,7 +53,7 @@ export function toFilters(search: ExplorerSearch): ExplorerFilters {
   return filters as ExplorerFilters
 }
 
-export type FilterPatch = Partial<Record<(typeof FILTER_KEYS)[number], unknown>>
+export type FilterPatch = Partial<Record<keyof ExplorerFilters, unknown>>
 
 // Every change to an explorer URL. Each returns a clean search, and any change
 // that alters which rows are shown starts again from the first page.

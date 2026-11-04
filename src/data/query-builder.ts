@@ -8,21 +8,31 @@ export function waveDate(month: string): string {
   return `${month}-01`
 }
 
+// One SQL condition per filter. A filter added to the schema without a
+// condition here fails the typecheck instead of being silently ignored.
+const FILTER_CONDITIONS: { [K in keyof ExplorerFilters]-?: Condition<K> } = {
+  show: (show) => eq(responses.showId, show),
+  genre: (genre) =>
+    sql`${responses.showId} in (select ${shows.id} from ${shows} where ${eq(shows.genre, genre)})`,
+  platform: (platform) => eq(responses.platform, platform),
+  region: (region) => eq(responses.region, region),
+  ageGroup: (ageGroup) => eq(responses.ageGroup, ageGroup),
+  waveFrom: (month) => gte(responses.wave, waveDate(month)),
+  waveTo: (month) => lte(responses.wave, waveDate(month)),
+  minAwareness: (score) => gte(responses.awareness, score),
+}
+
+type Condition<K extends keyof ExplorerFilters> = (value: NonNullable<ExplorerFilters[K]>) => SQL | undefined
+
+function condition<K extends keyof ExplorerFilters>(filters: ExplorerFilters, key: K): SQL | undefined {
+  const value = filters[key]
+  // TypeScript can't relate FILTER_CONDITIONS[key] to filters[key] for a generic key.
+  const build = FILTER_CONDITIONS[key] as Condition<K>
+  return value === undefined ? undefined : build(value as NonNullable<ExplorerFilters[K]>)
+}
+
 export function whereClause(filters: ExplorerFilters): SQL | undefined {
-  return and(
-    filters.show === undefined ? undefined : eq(responses.showId, filters.show),
-    filters.genre === undefined
-      ? undefined
-      : sql`${responses.showId} in (select ${shows.id} from ${shows} where ${eq(shows.genre, filters.genre)})`,
-    filters.platform === undefined ? undefined : eq(responses.platform, filters.platform),
-    filters.region === undefined ? undefined : eq(responses.region, filters.region),
-    filters.ageGroup === undefined ? undefined : eq(responses.ageGroup, filters.ageGroup),
-    filters.waveFrom === undefined ? undefined : gte(responses.wave, waveDate(filters.waveFrom)),
-    filters.waveTo === undefined ? undefined : lte(responses.wave, waveDate(filters.waveTo)),
-    filters.minAwareness === undefined
-      ? undefined
-      : gte(responses.awareness, filters.minAwareness),
-  )
+  return and(...(Object.keys(FILTER_CONDITIONS) as (keyof ExplorerFilters)[]).map((key) => condition(filters, key)))
 }
 
 const SORT_COLUMNS: Record<SortField, AnyColumn> = {
