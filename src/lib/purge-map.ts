@@ -17,7 +17,7 @@ const unique = (values: (string | null)[]) => [
   ...new Set(values.filter((value) => value !== null)),
 ]
 
-// Reads the payload sent by the webhook projection documented in README.md.
+// Reads the payload sent by the webhook projection documented in docs/caching.md.
 export function parsePublishedDocument(payload: unknown): PublishedDocument | null {
   const data = record(payload)
   const id = text(data?._id)
