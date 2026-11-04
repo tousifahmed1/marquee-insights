@@ -1,8 +1,10 @@
 packages:
   - studio
 allowBuilds:
+  '@google/genai': false
   esbuild: true
   lightningcss: true
+  protobufjs: false
   sharp: true
   workerd: true
 minimumReleaseAgeExclude:

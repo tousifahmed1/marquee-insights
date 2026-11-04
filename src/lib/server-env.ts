@@ -2,9 +2,12 @@ import { env } from 'cloudflare:workers'
 
 export type ServerSecret =
   | 'DATABASE_URL'
+  | 'DATABASE_URL_READONLY'
   | 'SANITY_READ_TOKEN'
   | 'SANITY_PREVIEW_SECRET'
   | 'SANITY_WEBHOOK_SECRET'
+  | 'GEMINI_API_KEY'
+  | 'GROQ_API_KEY'
 
 // Every secret read goes through here, from the Worker bindings. An empty value
 // counts as missing. Only import this from server-only code.

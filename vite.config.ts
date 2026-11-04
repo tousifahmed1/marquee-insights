@@ -19,6 +19,7 @@ const config = defineConfig({
           'drizzle-orm',
           'drizzle-orm/neon-http',
           'drizzle-orm/pg-core',
+          '@google/genai/web',
         ],
       },
     },

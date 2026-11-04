@@ -24,6 +24,13 @@
     {
       "binding": "PAGE_CACHE",
       "id": "a1116efc0bbd4da4943a61ed988721e5"
+    },
+    // Ask the data: cached answers, provider exhaustion marks, daily budget and
+    // per-IP counters (src/data/ask). Separate from the page cache so a publish
+    // never touches it and a reseed never touches pages.
+    {
+      "binding": "ASK_CACHE",
+      "id": "66bd4f56ca3b4d98b69788f4061114a6"
     }
   ]
 }
