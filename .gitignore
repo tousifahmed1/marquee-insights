@@ -19,3 +19,4 @@ blob-report
 
 # Playwright MCP
 .playwright-mcp
+tests/ask/.last-run*.json

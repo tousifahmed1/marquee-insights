@@ -20,6 +20,7 @@
     "webhook:test": "tsx scripts/send-test-webhook.ts",
     "ask:tokens": "tsx scripts/ask-prompt-tokens.ts",
     "warm:ask": "tsx scripts/warm-ask.ts",
+    "eval:ask": "tsx scripts/eval-ask.ts",
     "db:studio": "drizzle-kit studio",
     "generate-routes": "tsr generate",
     "build": "vite build",

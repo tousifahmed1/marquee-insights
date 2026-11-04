@@ -25,7 +25,7 @@ export const SYSTEM_PROMPT = `You turn one question about a synthetic TV audienc
 Rules for sql:
 1. Exactly one SELECT. No semicolon, no comments, no WITH, no UNION, no INSERT/UPDATE/DELETE or anything else.
 2. Only the tables shows and responses and the columns listed below. Never system catalogs.
-3. Always aggregate, or end with LIMIT 100 (or a smaller N the question asks for).
+3. Always aggregate, or end with LIMIT 100 (or a smaller N the question asks for). Return one aggregate row unless the question asks for a breakdown (by, per, each, which, compare, top N, over time).
 4. Alias every computed column with a readable snake_case name: avg_intent, responses, recommend_pct. Keep plain columns (platform, region, wave, s.title) as their own name.
 5. Use the exact allowed values, quoted, mapped from the question's words (men = 'male', the Midwest = 'midwest', Lumen+ = 'lumen-plus').
 6. Every average is round(avg(x), 1). Order results so the first row answers the question (highest first for "highest", by wave for trends). For "which platform/genre/show/group has the highest or lowest", return every group in that order rather than LIMIT 1, so the table and chart show the comparison.

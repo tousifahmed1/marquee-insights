@@ -80,6 +80,17 @@ For development and e2e runs, Cloudflare's always-passing test pair `1x000000000
 
 An answer shows the sentence, a timings line ("model 1.9 s, query 967 ms, total 2.9 s, via Gemini", or a "cached" badge with the time), a bar or line chart when the model suggested one and the rows suit it, the result table (averages and shares always with one decimal), and a "Show SQL" panel with the formatted query and a copy button. Refused, failed, rate-limited, over-budget, out-of-capacity and unverified outcomes each get their own card, and a skeleton laid out like an answer shows while a request runs. The page sends `Cache-Control: no-store`, is listed in the sitemap and the nav, and is linked from the explorer intro.
 
+## Evaluation
+
+`tests/ask/cases.ts` holds 20 questions with hand-written reference SQL (filters, group by, averages, top N, comparisons, trends, shares, counts, multi-filter joins) and 4 questions that must be refused (a prediction, missing data, an injection attempt, an off-topic question). `pnpm eval:ask` runs them through the real pipeline with the cache bypassed, compares result rows with the reference rows, and prints the score, every mismatch and the model calls used; `--provider gemini|groq` tests one provider and `--only-failed` reruns the last failures. It paces itself to the free per-minute limits, so a full run takes about 4 minutes on Gemini and 8 on Groq.
+
+| Provider | Answerable | Refusals | Model calls | Average per question |
+|---|---|---|---|---|
+| Gemini 3.5 Flash-Lite (primary) | 20/20 | 4/4 | 24 | 2.8 s |
+| Groq gpt-oss-120b (fallback) | 20/20 | 4/4 | 24 | 2.1 s |
+
+Two prompt changes came out of the first run, where Gemini scored 19/20: the schema context now states the release year range (Gemini had refused "shows released in 2026" as data it did not have), and the rules say to return one aggregate row unless the question asks for a breakdown (it had answered the same question per show).
+
 ## Read-only role
 
 Every query from this feature runs on the `ask_readonly` role, inside a `READ ONLY` transaction, with `SET LOCAL statement_timeout = '3s'`. The role itself also carries the timeout and read-only defaults, so the limits hold even if the code is wrong.

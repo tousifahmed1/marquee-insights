@@ -25,6 +25,8 @@ describe('schema context', () => {
     }
     expect(SCHEMA_CONTEXT).toContain('0-100')
     expect(SCHEMA_CONTEXT).toContain('1-10')
+    const years = CATALOGUE.map((show) => show.releaseYear)
+    expect(SCHEMA_CONTEXT).toContain(`release_year integer, ${Math.min(...years)} to ${Math.max(...years)}`)
   })
 
   it('has six single-select examples', () => {

@@ -8,6 +8,8 @@ import { AGE_GROUPS, GENDERS, GENRES, PLATFORMS, REGIONS, values } from '../dime
 const list = (items: readonly string[]) => items.map((item) => `'${item}'`).join(', ')
 
 const titles = CATALOGUE.map((show) => show.title).join(', ')
+const years = CATALOGUE.map((show) => show.releaseYear)
+const yearRange = `${Math.min(...years)} to ${Math.max(...years)}`
 
 export const SCHEMA_CONTEXT = `Database: Postgres. Synthetic TV audience survey. Two tables.
 
@@ -16,7 +18,7 @@ shows: one row per show.
 - title text, exact, case-sensitive. Titles: ${titles}
 - genre enum: ${list(values(GENRES))}
 - platform enum: ${list(values(PLATFORMS))} (labels: ${PLATFORMS.map((p) => `${p.label}=${p.value}`).join(', ')})
-- release_year integer
+- release_year integer, ${yearRange}
 
 responses: one row per survey respondent per show (about 50,000 rows).
 - id integer
