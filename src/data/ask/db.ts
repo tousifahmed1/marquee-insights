@@ -30,10 +30,14 @@ function getTypeParser(id: number, format?: 'text' | 'binary') {
 }
 
 export function createReadOnlyRunner(url: string): RunQuery {
-  const sql = neon(url, { fullResults: true, types: { getTypeParser } })
+  const sql = neon(url, { fullResults: true })
   return async (query) => {
+    // The parsers only apply when passed on the query itself.
     const [, result] = await sql.transaction(
-      [sql.query(`set local statement_timeout = '${STATEMENT_TIMEOUT}'`), sql.query(query)],
+      [
+        sql.query(`set local statement_timeout = '${STATEMENT_TIMEOUT}'`),
+        sql.query(query, [], { types: { getTypeParser } }),
+      ],
       { readOnly: true },
     )
     return {

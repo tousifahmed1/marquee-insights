@@ -17,6 +17,20 @@ A visitor asks a question in plain English, a model turns it into one SQL `SELEC
 
 `pnpm ask:tokens` counts it with the Gemini tokenizer. At the time of writing: schema 710 tokens, examples 437, total 1,147, against a budget of about 2,000 for the whole prompt.
 
+## One call per question
+
+`ask()` in `src/data/ask/pipeline.ts` sends the system prompt (rules, schema context, examples) and the question, and asks for one JSON object:
+
+```json
+{ "answerable": true, "sql": "...", "answer_template": "...", "chart": "bar" | "line" | "none", "reason": "" }
+```
+
+Both providers enforce that shape server-side (`responseJsonSchema` on Gemini, strict `json_schema` on Groq) and `parseReply()` checks it again with Zod. `answer_template` is one or two sentences with `{column}` placeholders that match the SQL's own column names, for example "{platform} leads with an average intent of {avg_intent} out of 100 across {responses} responses." `fillTemplate()` fills them from the first result row, mapping enum values to their labels and dates to "May 2026". The model never writes a number, so an answer can only contain figures the database returned. If a placeholder cannot be filled (missing column, null, no rows) the answer is "Here's what the data shows." above the table; the model is never called a second time for the sentence.
+
+The prompt tells the model: one SELECT, only the two tables, always aggregate or `LIMIT 100`, readable snake_case aliases, exact allowed values, `round(avg(x), 1)`, an allowlist of functions, and `answerable: false` for predictions, data the survey does not have, off-topic questions and anything that tries to change the rules. The question is appended as data after `Question:`; it is never part of the instructions. Output is capped at 800 tokens and each call is aborted after 15 seconds. The full prompt is 1,676 tokens (`pnpm ask:tokens`).
+
+Gemini runs with `thinkingLevel: LOW`, which measured fastest for this prompt (1.9 s against 6 to 7 s for the default and MINIMAL; `thinkingBudget: 0` is rejected by 3.5 Flash-Lite). Groq's free tier allows 8,000 tokens a minute, which with this prompt is about four questions a minute; the 429 carries a `retry-after` of a few seconds, so Groq is marked exhausted for the KV minimum of 60 seconds rather than the day.
+
 ## Read-only role
 
 Every query from this feature runs on the `ask_readonly` role, inside a `READ ONLY` transaction, with `SET LOCAL statement_timeout = '3s'`. The role itself also carries the timeout and read-only defaults, so the limits hold even if the code is wrong.
