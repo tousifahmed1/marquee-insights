@@ -34,10 +34,10 @@ export function AskLoading({ question }: { question: string }) {
           </span>
         </span>
       </p>
-      <div aria-hidden className="mt-6 space-y-3 motion-safe:animate-pulse">
-        <div className="h-6 w-3/4 rounded-sm bg-muted" />
-        <div className="h-4 w-1/3 rounded-sm bg-muted" />
-        <div className="mt-6 h-chart rounded-md bg-muted" />
+      <div aria-hidden className="mt-6 space-y-3 motion-safe:animate-pulse [&>div]:bg-muted-foreground/15">
+        <div className="h-6 w-3/4 rounded-sm" />
+        <div className="h-4 w-1/3 rounded-sm" />
+        <div className="mt-6 h-chart rounded-md" />
       </div>
     </div>
   )
