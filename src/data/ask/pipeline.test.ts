@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
+import { createMemoryKv } from '@/lib/edge'
+
+import { createAnswerCache } from './cache'
 import type { QueryResult } from './db'
 import type { GenerateResult, Llm } from './llm'
 import { FAILED_MESSAGE, UNSAFE_MESSAGE, ask } from './pipeline'
@@ -95,6 +98,37 @@ describe('ask', () => {
     }
     const outcome = await ask('q', { llm, validate: passAll, run })
     expect(outcome).toMatchObject({ status: 'failed', message: FAILED_MESSAGE })
+  })
+
+  it('serves a cached answer with zero model calls and no query', async () => {
+    const cache = createAnswerCache(createMemoryKv())
+    const llm = fakeLlm([reply({})])
+    const run = vi.fn(async () => result)
+    const first = await ask('How many responses?', { llm, validate: passAll, run, cache })
+    expect(first).toMatchObject({ status: 'answered', cached: false, modelCalls: 1 })
+
+    const second = await ask('how many   responses', { llm, validate: passAll, run, cache })
+    expect(second).toMatchObject({
+      status: 'answered',
+      cached: true,
+      modelCalls: 0,
+      answer: 'There are 50,000 responses.',
+      timings: { model: 0, query: 0 },
+    })
+    expect(llm.calls).toBe(1)
+    expect(run).toHaveBeenCalledTimes(1)
+  })
+
+  it('caches refusals but not failures', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const cache = createAnswerCache(createMemoryKv())
+    const refusing = fakeLlm([reply({ answerable: false, sql: '', reason: 'future' })])
+    await ask('Next month?', { llm: refusing, validate: passAll, run: async () => result, cache })
+    expect(await cache.get('Next month?')).toMatchObject({ status: 'refused', cached: true })
+
+    const failing = fakeLlm(['not json'])
+    await ask('q', { llm: failing, validate: passAll, run: async () => result, cache })
+    expect(await cache.get('q')).toBeNull()
   })
 
   it('falls back to the neutral sentence and drops the chart for a single row', async () => {

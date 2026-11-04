@@ -87,6 +87,7 @@ async function main() {
     await db.execute(sql`analyze ${shows}, ${responses}`)
     console.log(`Analyzed tables in ${elapsed(step)}`)
     console.log(`Waves ${waves[0]} to ${waves.at(-1)}. Done in ${elapsed(started)}`)
+    console.log('Ask the data answers are cached per data version: run `pnpm warm:ask --reset` (add the site URL for production).')
   } finally {
     await pool.end()
   }

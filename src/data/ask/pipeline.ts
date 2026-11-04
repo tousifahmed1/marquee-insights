@@ -1,3 +1,4 @@
+import type { AnswerCache } from './cache'
 import type { Row, RunQuery } from './db'
 import type { Llm, Provider } from './llm'
 import { buildPrompt } from './prompt'
@@ -5,8 +6,9 @@ import { parseReply } from './reply'
 import type { ChartKind } from './reply'
 import { answerFrom } from './template'
 
-// One question in, one outcome out: at most two model calls (the second only
-// after a validation failure, and only if the budget allows), one query.
+// One question in, one outcome out. A cached answer costs nothing. Otherwise
+// at most two model calls (the second only after a validation failure, and
+// only if the budget allows) and one query, and the outcome is cached.
 
 export const MAX_ROWS = 100
 export const UNSAFE_MESSAGE = "I couldn't answer that safely. Try rephrasing or use one of the examples."
@@ -28,6 +30,7 @@ export type Answer = {
   rows: Row[]
   rowCount: number
   provider: Provider
+  cached: boolean
   modelCalls: number
   timings: Timings
 }
@@ -37,6 +40,7 @@ export type Refusal = {
   question: string
   reason: string
   provider: Provider
+  cached: boolean
   modelCalls: number
   timings: Timings
 }
@@ -55,6 +59,7 @@ export type AskDeps = {
   llm: Llm
   validate: Validate
   run: RunQuery
+  cache?: AnswerCache
   // Whether a second model call is allowed right now (the daily budget).
   canRetry?: () => Promise<boolean>
   now?: () => number
@@ -67,8 +72,21 @@ type Attempt =
   | { kind: 'unavailable'; status: Failure['status']; message: string }
 
 export async function ask(question: string, deps: AskDeps): Promise<AskOutcome> {
-  const { llm, validate, run, canRetry = async () => true, now = Date.now } = deps
+  const { cache, now = Date.now } = deps
   const started = now()
+  const hit = await cache?.get(question)
+  if (hit) {
+    return { ...hit, cached: true, modelCalls: 0, timings: { model: 0, query: 0, total: now() - started } }
+  }
+  const outcome = await generateAnswer(question, deps, started)
+  if (cache && (outcome.status === 'answered' || outcome.status === 'refused')) {
+    await cache.put(question, outcome)
+  }
+  return outcome
+}
+
+async function generateAnswer(question: string, deps: AskDeps, started: number): Promise<AskOutcome> {
+  const { llm, validate, run, canRetry = async () => true, now = Date.now } = deps
   let modelMs = 0
   let modelCalls = 0
 
@@ -106,7 +124,7 @@ export async function ask(question: string, deps: AskDeps): Promise<AskOutcome> 
     return { status: 'failed', question, message: UNSAFE_MESSAGE, modelCalls, timings: timings() }
   }
   if (result.kind === 'refused') {
-    return { status: 'refused', question, reason: result.reason, provider: result.provider, modelCalls, timings: timings() }
+    return { status: 'refused', question, reason: result.reason, provider: result.provider, cached: false, modelCalls, timings: timings() }
   }
 
   const queryStarted = now()
@@ -129,6 +147,7 @@ export async function ask(question: string, deps: AskDeps): Promise<AskOutcome> 
     rows,
     rowCount: queried.rowCount,
     provider: result.provider,
+    cached: false,
     modelCalls,
     timings: timings(now() - queryStarted),
   }

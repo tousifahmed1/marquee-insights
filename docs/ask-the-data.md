@@ -46,6 +46,14 @@ If there is no `LIMIT` and the result is not a single aggregate row, `LIMIT 100`
 
 The alias `show` is a keyword to the parser, so the validator quotes it rather than failing a natural query.
 
+## Caching
+
+The cache is checked before any model is called. A question is normalised (lowercased, trimmed, spaces collapsed, trailing punctuation removed) and hashed with SHA-256; the full outcome (SQL, template, chart kind, rows, answer, provider) is stored in the `ASK_CACHE` KV namespace under `ask:answer:v<data version>:<hash>`. The data is static, so entries never expire. Refusals are cached too, so a repeated off-topic question is free. A hit costs zero model calls and no database query, and comes back with `cached: true`.
+
+The data version is the `ask:data-version` key. `pnpm warm:ask --reset` writes the current time as the new version, after which every old entry is simply never read again; run it after `pnpm seed`. Failures and out-of-capacity results are never cached.
+
+`pnpm warm:ask [url] [--reset]` posts to `/api/ask/warm` with the `x-ask-admin` header, which runs each example question once and stores the result. Run it after every deploy (and after a reseed with `--reset`) so the example buttons always answer from the cache. Measured locally: the first run made 6 model calls in 11 seconds, the second made 0 in 29 ms.
+
 ## Read-only role
 
 Every query from this feature runs on the `ask_readonly` role, inside a `READ ONLY` transaction, with `SET LOCAL statement_timeout = '3s'`. The role itself also carries the timeout and read-only defaults, so the limits hold even if the code is wrong.
