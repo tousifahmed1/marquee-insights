@@ -46,7 +46,7 @@ export const EXAMPLES: readonly Example[] = [
   },
   {
     question: 'Which five shows have the highest awareness?',
-    sql: 'select s.title as show, round(avg(r.awareness), 1) as avg_awareness, count(*) as responses from responses r join shows s on s.id = r.show_id group by s.title order by avg_awareness desc limit 5',
+    sql: 'select s.title, round(avg(r.awareness), 1) as avg_awareness, count(*) as responses from responses r join shows s on s.id = r.show_id group by s.title order by avg_awareness desc limit 5',
   },
   {
     question: 'Do men or women have higher intent to watch on Tidewell?',

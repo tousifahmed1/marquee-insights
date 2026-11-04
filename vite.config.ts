@@ -20,6 +20,7 @@ const config = defineConfig({
           'drizzle-orm/neon-http',
           'drizzle-orm/pg-core',
           '@google/genai/web',
+          'node-sql-parser/build/postgresql',
         ],
       },
     },

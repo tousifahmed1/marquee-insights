@@ -31,6 +31,21 @@ The prompt tells the model: one SELECT, only the two tables, always aggregate or
 
 Gemini runs with `thinkingLevel: LOW`, which measured fastest for this prompt (1.9 s against 6 to 7 s for the default and MINIMAL; `thinkingBudget: 0` is rejected by 3.5 Flash-Lite). Groq's free tier allows 8,000 tokens a minute, which with this prompt is about four questions a minute; the 429 carries a `retry-after` of a few seconds, so Groq is marked exhausted for the KV minimum of 60 seconds rather than the day.
 
+## Validation
+
+`validateSql()` in `src/data/ask/validate.ts` never trusts the model. The SQL is rejected outright if it contains a comment or a semicolon, then parsed with node-sql-parser in Postgres mode. The tree is walked node by node and everything is deny-by-default:
+
+- exactly one statement, and it is a `SELECT`; no `WITH`, `UNION`, `INTERSECT`, `EXCEPT`, `SELECT INTO`, `FOR UPDATE` or window functions
+- only the `shows` and `responses` tables (optionally `public.`-qualified), so `pg_catalog`, `information_schema`, the `drizzle` schema and any other table are refused, in subqueries too
+- only columns that exist on the table an alias resolves to, or aliases defined in the same `SELECT`; the column lists come from the Drizzle schema
+- only `avg`, `count`, `sum`, `min`, `max` as aggregates and `round`, `coalesce`, `nullif`, `abs`, `floor`, `ceil`, `greatest`, `least`, `date_trunc`, `to_char`, `lower`, `upper` as functions, plus `CASE`, `EXTRACT`, casts, intervals and `FILTER`; so `pg_sleep`, `version`, `generate_series` and everything else is refused
+- only comparison, arithmetic, boolean, `IN`, `LIKE`, `IS` and `BETWEEN` operators
+- any expression kind the walker does not know is refused
+
+If there is no `LIMIT` and the result is not a single aggregate row, `LIMIT 100` is added; a larger limit is cut to 100. The SQL that runs is the checked tree printed back by the parser, so nothing the parser did not understand can reach Postgres. A rejection carries a reason ("function pg_sleep is not allowed", "table users is not allowed; only shows and responses are") that goes into the one retry prompt.
+
+The alias `show` is a keyword to the parser, so the validator quotes it rather than failing a natural query.
+
 ## Read-only role
 
 Every query from this feature runs on the `ask_readonly` role, inside a `READ ONLY` transaction, with `SET LOCAL statement_timeout = '3s'`. The role itself also carries the timeout and read-only defaults, so the limits hold even if the code is wrong.

@@ -5,7 +5,9 @@ import { neon, types } from '@neondatabase/serverless'
 // these are the layers below it.
 export const STATEMENT_TIMEOUT = '3s'
 
-export type Row = Record<string, unknown>
+// What a cell can hold after the parsers below; anything else becomes text.
+export type Cell = string | number | boolean | null
+export type Row = Record<string, Cell>
 
 export type QueryResult = {
   columns: string[]
@@ -42,8 +44,21 @@ export function createReadOnlyRunner(url: string): RunQuery {
     )
     return {
       columns: result.fields.map((field) => field.name),
-      rows: result.rows as Row[],
+      rows: (result.rows as Record<string, unknown>[]).map(toRow),
       rowCount: result.rowCount ?? result.rows.length,
     }
   }
+}
+
+function toRow(raw: Record<string, unknown>): Row {
+  const row: Row = {}
+  for (const [key, value] of Object.entries(raw)) row[key] = toCell(value)
+  return row
+}
+
+function toCell(value: unknown): Cell {
+  if (value === null || value === undefined) return null
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return value
+  if (value instanceof Date) return value.toISOString()
+  return String(value)
 }
